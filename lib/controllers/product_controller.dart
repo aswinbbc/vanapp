@@ -16,7 +16,7 @@ class ProductController {
     final List result =
         await getData("StockTaken/GetZeroStockEntries?branch_id=1");
     print(result);
-    return result.first['entry_id'];
+    return result.first['st_entry_id'];
   }
 
   Future<String> enterStock(
@@ -47,6 +47,7 @@ class ProductController {
     String inventoryId = await this.inventoryId;
     String zeroEntryId = await zeroStockEntryId;
     String entryDate = currentDate;
+    print({inventoryId, zeroStockEntryId, entryDate});
     final List result = await getData(
         "StockTaken/WriteStockTakenMaster?entry_date=$entryDate&ref_no=$refNo&stock_taken_emp_id=$stockTakenEmpId&inventory_id=$inventoryId&narration=testings&app_user_id=$appUserId&zero_stock_entry_id=$zeroEntryId&system_id=$systemId");
     print(result);
@@ -59,10 +60,12 @@ class ProductController {
     userId = '1',
   }) async {
     String entryDate = currentDate;
+    print({supplierId, systemId, userId, entryDate});
+
     final List result = await getData(
         "GoodsReceipt/WriteGRNMaster?supplier_id=$supplierId&entry_date=$entryDate&system_id=$systemId&user_id=$userId");
     print(result);
-    return result.first['entry_id'];
+    return result.first['BILLID'];
   }
 
   Future<String> writeStockTakenDetails(
@@ -73,6 +76,18 @@ class ProductController {
       String qty = '1'}) async {
     final List result = await getData(
         "StockTaken/WriteStockTakenDetails?entry_id=$entryId&product_id=$productId&unit_id=$unitId&cost=$cost&qty=$qty");
+    print(result);
+    return result.first.toString();
+  }
+
+  Future<String> writeGrnDetails(
+      {required String entryId,
+      required String productId,
+      uomName = 'PCS',
+      required String cost,
+      String qty = '1'}) async {
+    final List result = await getData(
+        "GoodsReceipt/WriteGRNDetails?slno=1&entryid=$entryId&product_id=$productId&qty=$qty&inv_code=Company&uom_name=$uomName&uom_id=1&price=$cost");
     print(result);
     return result.first.toString();
   }

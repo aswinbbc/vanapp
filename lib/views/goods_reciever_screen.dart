@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/types/gf_button_type.dart';
 import 'package:vanapp/controllers/supplier_controller.dart';
+import 'package:vanapp/models/supplier_model.dart';
 import 'package:vanapp/widgets/custom_textfield.dart';
 import 'package:vanapp/widgets/my_barcode_scanner.dart';
 import 'package:vanapp/widgets/my_data_table.dart';
@@ -33,6 +34,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
     //   'qty': 1
     // }
   ];
+  List<Supplier> suppliers = [];
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -47,10 +49,16 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                   flex: 2,
                   child: FutureBuilder(
                       future: SupplierController().getSuppliers(),
-                      builder: (context, AsyncSnapshot<List<String>> snapshot) {
+                      builder:
+                          (context, AsyncSnapshot<List<Supplier>> snapshot) {
+                        if (snapshot.hasData) {
+                          suppliers = snapshot.data!;
+                        }
                         return snapshot.hasData
                             ? MyDropdown(
-                                list: snapshot.data!,
+                                list: snapshot.data!
+                                    .map((supplier) => supplier.toString())
+                                    .toList(),
                                 controller: controller,
                               )
                             : const Text("waiting.....");
@@ -114,10 +122,15 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                             productName: productNameController.text,
                             cost: retailPriceController.text,
                           ),
-                          'qty': int.parse(qtyController.text.isEmpty
+                          'qty': double.parse(qtyController.text.isEmpty
                               ? "1"
                               : qtyController.text)
                         });
+                        barcodeController.clear();
+                        productNameController.clear();
+                        retailPriceController.clear();
+
+                        qtyController.clear();
                       });
                     },
                     text: "Add",
@@ -131,30 +144,42 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
           ],
         ),
         Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                  child: SingleChildScrollView(
-                      child: ProductDataTable(
-                listOfColumns: productList,
-                onRemove: (index) {
-                  setState(() {
-                    productList.removeAt(index);
-                  });
-                },
-              ))),
-            ],
-          ),
-        ),
+            child: SingleChildScrollView(
+                child: ProductDataTable(
+          listOfColumns: productList,
+          onRemove: (index) {
+            setState(() {
+              productList.removeAt(index);
+            });
+          },
+        ))),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
             height: 60,
             child: GFButton(
               onPressed: () async {
-                final String supplier = controller.value;
-                
+                final String supplier = suppliers
+                    .where((element) => element.toString() == controller.value)
+                    .first
+                    .clientId!;
+                final String entryId = await ProductController()
+                    .writeGrnMaster(supplierId: supplier);
+                print(entryId);
+                productList.map((productMap) async {
+                  print('adding');
+                  ProductModel product = productMap['product'];
+                  await ProductController().writeGrnDetails(
+                      entryId: entryId,
+                      uomName: product.uom,
+                      productId: product.prodId!,
+                      cost: product.cost!,
+                      qty: productMap['qty']);
+                });
+                print('completed');
+                setState(() {
+                  productList.clear();
+                });
               },
               text: "Submit",
               type: GFButtonType.solid,

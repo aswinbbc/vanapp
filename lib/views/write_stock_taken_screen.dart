@@ -90,7 +90,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
                             productName: productNameController.text,
                             cost: retailPriceController.text,
                           ),
-                          'qty': int.parse(qtyController.text.isEmpty
+                          'qty': double.parse(qtyController.text.isEmpty
                               ? "1"
                               : qtyController.text)
                         });
@@ -107,22 +107,15 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
           ],
         ),
         Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                  child: SingleChildScrollView(
-                      child: ProductDataTable(
-                listOfColumns: productList,
-                onRemove: (index) {
-                  setState(() {
-                    productList.removeAt(index);
-                  });
-                },
-              ))),
-            ],
-          ),
-        ),
+            child: SingleChildScrollView(
+                child: ProductDataTable(
+          listOfColumns: productList,
+          onRemove: (index) {
+            setState(() {
+              productList.removeAt(index);
+            });
+          },
+        ))),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
@@ -131,6 +124,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
               onPressed: () async {
                 final String entryId =
                     await ProductController().writeStockTakenMaster();
+
                 productList.map((productMap) async {
                   print('adding');
                   ProductModel product = productMap['product'];
@@ -141,7 +135,9 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
                       qty: productMap['qty']);
                 });
                 print('completed');
-                productList.clear();
+                setState(() {
+                  productList.clear();
+                });
               },
               text: "Submit",
               type: GFButtonType.solid,

@@ -86,9 +86,11 @@ class ProductController {
       uomName = 'PCS',
       required String cost,
       String qty = '1'}) async {
+    print(
+        "GoodsReceipt/WriteGRNDetails?slno=1&entryid=$entryId&product_id=$productId&qty=$qty&inv_code=Company&uom_name=$uomName&uom_id=1&price=$cost");
+
     final List result = await getData(
         "GoodsReceipt/WriteGRNDetails?slno=1&entryid=$entryId&product_id=$productId&qty=$qty&inv_code=Company&uom_name=$uomName&uom_id=1&price=$cost");
-    print(result);
     return result.first.toString();
   }
 }

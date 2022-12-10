@@ -48,6 +48,7 @@ class _ViewScannedProductScreenState extends State<ViewScannedProductScreen> {
                       stockController.text = value.stock ?? "";
                       descriptionController.text = value.prodCode ?? "";
                       isSearching = false;
+                      value.prodId != null ? FocusScope.of(context).unfocus() : null;
                     });
                   });
                   // }

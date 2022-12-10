@@ -17,9 +17,9 @@ Future getData(String url,
   } else {
     result = await http.get(Uri.parse("${await Constants.BASE_URL}$url"));
   }
-  print({'url :', result.request!.url});
+  print({'url :', result.request!.url, result.statusCode, result.body});
   if (kDebugMode) {
-    print(result.statusCode);
+    print({result.statusCode});
   }
   if (result.statusCode == 200) {
     final data = result.body;

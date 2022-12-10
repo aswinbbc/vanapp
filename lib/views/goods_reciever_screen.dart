@@ -35,6 +35,8 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
     // }
   ];
   List<Supplier> suppliers = [];
+
+  ProductModel? sampleProduct;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -75,9 +77,11 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
             });
             ProductController().getProductByBarcode(barcode).then((value) {
               setState(() {
+                sampleProduct = value;
                 productNameController.text = value.productName ?? "";
                 retailPriceController.text = value.retailPrice ?? "";
                 isSearching = false;
+                value.prodId != null ? FocusScope.of(context).unfocus() : null;
               });
             });
             // }
@@ -116,16 +120,14 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                   child: GFButton(
                     onPressed: () {
                       setState(() {
-                        productList.add({
-                          'product': ProductModel(
-                            barcode: barcodeController.text,
-                            productName: productNameController.text,
-                            cost: retailPriceController.text,
-                          ),
-                          'qty': double.parse(qtyController.text.isEmpty
-                              ? "1"
-                              : qtyController.text)
-                        });
+                        if (sampleProduct != null) {
+                          productList.add({
+                            'product': sampleProduct,
+                            'qty': double.parse(qtyController.text.isEmpty
+                                ? "1"
+                                : qtyController.text)
+                          });
+                        }
                         barcodeController.clear();
                         productNameController.clear();
                         retailPriceController.clear();
@@ -166,17 +168,21 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                 final String entryId = await ProductController()
                     .writeGrnMaster(supplierId: supplier);
                 print(entryId);
-                productList.map((productMap) async {
-                  print('adding');
+                final pController = ProductController();
+
+                await Future.wait(productList.map((productMap) async {
                   ProductModel product = productMap['product'];
-                  await ProductController().writeGrnDetails(
+
+                  await pController.writeGrnDetails(
                       entryId: entryId,
                       uomName: product.uom,
                       productId: product.prodId!,
                       cost: product.cost!,
-                      qty: productMap['qty']);
+                      qty: productMap['qty'].toString());
+                }));
+                print({
+                  'completed',
                 });
-                print('completed');
                 setState(() {
                   productList.clear();
                 });

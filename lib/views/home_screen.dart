@@ -12,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<Widget> screens = [
     const ViewScannedProductScreen(),
     const GoodsRecieverScreen(),
@@ -19,9 +20,16 @@ class _HomeScreenState extends State<HomeScreen> {
     const SettingsScreen(),
   ];
   int currentIndex = 0;
+  closeDrawer() {
+    if (_scaffoldKey.currentState!.isDrawerOpen) {
+      _scaffoldKey.currentState!.openEndDrawer();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(),
       drawer: Drawer(
@@ -31,27 +39,39 @@ class _HomeScreenState extends State<HomeScreen> {
             const ListTile(),
             ListTile(
               title: const Text('View product details'),
-              onTap: () => setState(
-                () => currentIndex = 0,
-              ),
+              onTap: () {
+                closeDrawer();
+                setState(
+                  () => currentIndex = 0,
+                );
+              },
             ),
             ListTile(
               title: const Text('Goods reciever'),
-              onTap: () => setState(
-                () => currentIndex = 1,
-              ),
+              onTap: () {
+                closeDrawer();
+                setState(
+                  () => currentIndex = 1,
+                );
+              },
             ),
             ListTile(
               title: const Text('Enter Stock'),
-              onTap: () => setState(
-                () => currentIndex = 2,
-              ),
+              onTap: () {
+                closeDrawer();
+                setState(
+                  () => currentIndex = 2,
+                );
+              },
             ),
             ListTile(
               title: const Text('Settings'),
-              onTap: () => setState(
-                () => currentIndex = 3,
-              ),
+              onTap: () {
+                closeDrawer();
+                setState(
+                  () => currentIndex = 3,
+                );
+              },
             ),
           ],
         ),

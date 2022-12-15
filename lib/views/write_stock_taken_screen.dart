@@ -46,7 +46,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
                 productNameController.text = value.productName ?? "";
                 retailPriceController.text = value.retailPrice ?? "";
                 isSearching = false;
-                value.prodId != null ? FocusScope.of(context).unfocus() : null;
+                // value.prodId != null ? FocusScope.of(context).unfocus() : null;
               });
             });
             // }

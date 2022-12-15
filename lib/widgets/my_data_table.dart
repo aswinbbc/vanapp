@@ -26,12 +26,19 @@ class _ProductDataTableState extends State<ProductDataTable> {
       child: SizedBox(
         width: (MediaQuery.of(context).size.width - 5),
         child: DataTable(
+          border: TableBorder.symmetric(
+              // inside: const BorderSide(width: 2.0),
+              // outside: const BorderSide(width: 1.0),
+              ),
           columnSpacing: 1,
           columns: const [
             DataColumn(label: Expanded(flex: 4, child: Text('Product'))),
-            DataColumn(label: Expanded(flex: 1, child: Text('Qty'))),
-            DataColumn(label: Expanded(flex: 1, child: Text('Cost'))),
-            DataColumn(label: Expanded(flex: 1, child: Text('total'))),
+            DataColumn(
+                label: Expanded(flex: 1, child: Center(child: Text('Qty')))),
+            DataColumn(
+                label: Expanded(flex: 1, child: Center(child: Text('Cost')))),
+            DataColumn(
+                label: Expanded(flex: 2, child: Center(child: Text('total')))),
           ],
           rows:
               listOfColumns // Loops through dataColumnText, each iteration assigning the value to element
@@ -40,10 +47,11 @@ class _ProductDataTableState extends State<ProductDataTable> {
                           cells: <DataCell>[
                             DataCell(Text(map['product']
                                 .productName!)), //Extracting from Map element the value
-                            DataCell(Text(map['qty'].toString())),
-                            DataCell(Text(map['product'].cost!)),
+                            DataCell(
+                                Center(child: Text(map['qty'].toString()))),
+                            DataCell(Center(child: Text(map['product'].cost!))),
                             DataCell(Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 Text((double.parse(map['product'].cost!) *
                                         map['qty'])

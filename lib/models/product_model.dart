@@ -3,6 +3,7 @@ class ProductModel {
   String? prodCode;
   String? barcode;
   String? productName;
+  String? uomId;
   String? uom;
   String? retailPrice;
   String? cost;
@@ -13,6 +14,7 @@ class ProductModel {
       this.prodCode,
       this.barcode,
       this.productName,
+      this.uomId,
       this.uom,
       this.retailPrice,
       this.cost,
@@ -23,6 +25,7 @@ class ProductModel {
     prodCode = json['ProdCode'];
     barcode = json['Barcode'];
     productName = json['ProductName'];
+    uomId = json['uom_id'];
     uom = json['uom'];
     retailPrice = json['RetailPrice'];
     cost = json['Cost'];
@@ -35,6 +38,7 @@ class ProductModel {
     data['ProdCode'] = prodCode;
     data['Barcode'] = barcode;
     data['ProductName'] = productName;
+    data['uom_id'] = uomId;
     data['uom'] = uom;
     data['RetailPrice'] = retailPrice;
     data['Cost'] = cost;

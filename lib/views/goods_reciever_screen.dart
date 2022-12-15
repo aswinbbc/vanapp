@@ -41,109 +41,121 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
+        Expanded(
+          child: ListView(
             children: [
-              const Expanded(child: Text("Supplier")),
-              const Text(" : "),
-              Expanded(
-                  flex: 2,
-                  child: FutureBuilder(
-                      future: SupplierController().getSuppliers(),
-                      builder:
-                          (context, AsyncSnapshot<List<Supplier>> snapshot) {
-                        if (snapshot.hasData) {
-                          suppliers = snapshot.data!;
-                        }
-                        return snapshot.hasData
-                            ? MyDropdown(
-                                list: snapshot.data!
-                                    .map((supplier) => supplier.toString())
-                                    .toList(),
-                                controller: controller,
-                              )
-                            : const Text("waiting.....");
-                      })),
-            ],
-          ),
-        ),
-        MyBarcodeScanner(
-          controller: barcodeController,
-          onBarcode: (barcode) {
-            // if (isValidBarcode(barcode)) {
-            setState(() {
-              isSearching = true;
-            });
-            ProductController().getProductByBarcode(barcode).then((value) {
-              setState(() {
-                sampleProduct = value;
-                productNameController.text = value.productName ?? "";
-                retailPriceController.text = value.retailPrice ?? "";
-                isSearching = false;
-                value.prodId != null ? FocusScope.of(context).unfocus() : null;
-              });
-            });
-            // }
-          },
-        ),
-        Row(
-          children: [
-            Expanded(
-                flex: 2,
-                child: CustomTextField(
-                  hintText: "Product name",
-                  enabled: false,
-                  controller: productNameController,
-                )),
-            Expanded(
-                child: CustomTextField(
-              hintText: "Price",
-              enabled: false,
-              controller: retailPriceController,
-            )),
-          ],
-        ),
-        Row(
-          children: [
-            Expanded(
-                child: CustomTextField(
-              hintText: "Qty eg:- 1",
-              inputType: TextInputType.number,
-              controller: qtyController,
-            )),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: SizedBox(
-                  height: 60,
-                  child: GFButton(
-                    onPressed: () {
-                      setState(() {
-                        if (sampleProduct != null) {
-                          productList.add({
-                            'product': sampleProduct,
-                            'qty': double.parse(qtyController.text.isEmpty
-                                ? "1"
-                                : qtyController.text)
-                          });
-                        }
-                        barcodeController.clear();
-                        productNameController.clear();
-                        retailPriceController.clear();
-
-                        qtyController.clear();
-                      });
-                    },
-                    text: "Add",
-                    type: GFButtonType.solid,
-                    fullWidthButton: true,
-                    blockButton: true,
-                  ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 1.0),
+                child: Row(
+                  children: [
+                    const Expanded(child: Text("Supplier")),
+                    const Text(" : "),
+                    Expanded(
+                        flex: 2,
+                        child: FutureBuilder(
+                            future: SupplierController().getSuppliers(),
+                            builder: (context,
+                                AsyncSnapshot<List<Supplier>> snapshot) {
+                              if (snapshot.hasData) {
+                                suppliers = snapshot.data!;
+                              }
+                              return snapshot.hasData
+                                  ? MyDropdown(
+                                      list: snapshot.data!
+                                          .map(
+                                              (supplier) => supplier.toString())
+                                          .toList(),
+                                      controller: controller,
+                                    )
+                                  : const Text("waiting.....");
+                            })),
+                  ],
                 ),
               ),
-            ),
-          ],
+              MyBarcodeScanner(
+                controller: barcodeController,
+                onBarcode: (barcode) {
+                  // if (isValidBarcode(barcode)) {
+                  setState(() {
+                    isSearching = true;
+                  });
+                  ProductController()
+                      .getProductByBarcode(barcode)
+                      .then((value) {
+                    setState(() {
+                      sampleProduct = value;
+                      productNameController.text = value.productName ?? "";
+                      retailPriceController.text = value.retailPrice ?? "";
+                      isSearching = false;
+                      // value.prodId != null
+                      //     ? FocusScope.of(context).unfocus()
+                      //     : null;
+                    });
+                  });
+                  // }
+                },
+              ),
+              Row(
+                children: [
+                  Expanded(
+                      flex: 2,
+                      child: CustomTextField(
+                        hintText: "Product name",
+                        enabled: false,
+                        controller: productNameController,
+                      )),
+                  Expanded(
+                      child: CustomTextField(
+                    hintText: "Price",
+                    enabled: false,
+                    controller: retailPriceController,
+                  )),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                      child: CustomTextField(
+                    hintText: "Qty eg:- 1",
+                    inputType: TextInputType.number,
+                    controller: qtyController,
+                  )),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: SizedBox(
+                        height: 60,
+                        child: GFButton(
+                          onPressed: () {
+                            setState(() {
+                              if (sampleProduct != null) {
+                                productList.add({
+                                  'product': sampleProduct,
+                                  'qty': double.parse(qtyController.text.isEmpty
+                                      ? "1"
+                                      : qtyController.text)
+                                });
+                              }
+                              barcodeController.clear();
+                              productNameController.clear();
+                              retailPriceController.clear();
+
+                              qtyController.clear();
+                            });
+                          },
+                          text: "Add",
+                          type: GFButtonType.solid,
+                          fullWidthButton: true,
+                          blockButton: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
         Expanded(
             child: SingleChildScrollView(
@@ -176,6 +188,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                   await pController.writeGrnDetails(
                       entryId: entryId,
                       uomName: product.uom,
+                      uomId: product.uomId,
                       productId: product.prodId!,
                       cost: product.cost!,
                       qty: productMap['qty'].toString());

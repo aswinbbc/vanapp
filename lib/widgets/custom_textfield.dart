@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatefulWidget {
   const CustomTextField(
-      {super.key, required this.hintText, this.controller, this.inputType,this.enabled=true});
+      {super.key,
+      required this.hintText,
+      this.controller,
+      this.inputType,
+      this.enabled = true});
   final String hintText;
   final TextEditingController? controller;
   final TextInputType? inputType;
@@ -22,7 +26,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       child: TextField(
         enabled: widget.enabled,
         keyboardType: widget.inputType ?? TextInputType.name,

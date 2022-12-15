@@ -25,7 +25,7 @@ class _MyBarcodeScannerState extends State<MyBarcodeScanner> {
     return Row(children: [
       Expanded(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
           child: TextField(
             onChanged: onBarcode,
             controller: controller,

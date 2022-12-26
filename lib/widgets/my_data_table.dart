@@ -55,7 +55,7 @@ class _ProductDataTableState extends State<ProductDataTable> {
                               children: [
                                 Text((double.parse(map['product'].cost!) *
                                         map['qty'])
-                                    .toString()),
+                                    .toStringAsFixed(2)),
                                 InkWell(
                                   child: const Icon(Icons.close),
                                   onTap: () {

@@ -14,6 +14,7 @@ class ViewScannedProductScreen extends StatefulWidget {
 
 class _ViewScannedProductScreenState extends State<ViewScannedProductScreen> {
   final TextEditingController barcodeController = TextEditingController();
+  final TextEditingController barcodeViewController = TextEditingController();
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController retailPriceController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
@@ -47,7 +48,11 @@ class _ViewScannedProductScreenState extends State<ViewScannedProductScreen> {
                       retailPriceController.text = value.retailPrice ?? "";
                       stockController.text = value.stock ?? "";
                       descriptionController.text = value.prodCode ?? "";
+                      barcodeViewController.text = value.barcode ?? '';
                       isSearching = false;
+                      if ((value.prodId ?? '').isNotEmpty) {
+                        barcodeController.text = '';
+                      }
                       // value.prodId != null ? FocusScope.of(context).unfocus() : null;
                     });
                   });
@@ -61,6 +66,20 @@ class _ViewScannedProductScreenState extends State<ViewScannedProductScreen> {
               hintText: "UOM",
               controller: uomController,
             )),
+          ],
+        ),
+        Row(
+          children: [
+            const Expanded(child: Text("Barcode")),
+            const Text(":"),
+            Expanded(
+              flex: 2,
+              child: CustomTextField(
+                hintText: "Barcode",
+                enabled: false,
+                controller: barcodeViewController,
+              ),
+            ),
           ],
         ),
         Row(
@@ -112,6 +131,10 @@ class _ViewScannedProductScreenState extends State<ViewScannedProductScreen> {
             Expanded(
               flex: 2,
               child: CustomTextField(
+                style: const TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20),
                 hintText: "Stock",
                 enabled: false,
                 controller: stockController,

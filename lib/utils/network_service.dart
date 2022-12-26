@@ -25,7 +25,7 @@ Future getData(String url,
     final data = result.body;
 
     if (kDebugMode) {
-      print(data);
+      print(result.request!.url);
     }
     return jsonDecode(data);
   }

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class MyBarcodeScanner extends StatefulWidget {
-  const MyBarcodeScanner({super.key, this.onBarcode, this.controller});
+  const MyBarcodeScanner({super.key, this.onBarcode, this.controller,this.focusNode});
   final Function(String)? onBarcode;
-
+  final FocusNode? focusNode;
   final TextEditingController? controller;
   @override
   State<MyBarcodeScanner> createState() => _MyBarcodeScannerState();
@@ -27,6 +27,7 @@ class _MyBarcodeScannerState extends State<MyBarcodeScanner> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
           child: TextField(
+            focusNode:  widget.focusNode,
             onChanged: onBarcode,
             controller: controller,
             decoration: InputDecoration(

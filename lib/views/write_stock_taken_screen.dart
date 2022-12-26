@@ -20,6 +20,13 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController retailPriceController = TextEditingController();
   final TextEditingController qtyController = TextEditingController();
+  final TextEditingController barcodeViewController = TextEditingController();
+  final TextEditingController unitController = TextEditingController();
+
+  final TextEditingController stockController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+
+  var focusNode = FocusNode();
   bool isSearching = false;
   List<Map<String, dynamic>> productList = [
     // {
@@ -30,121 +37,214 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
     //   'qty': 1
     // }
   ];
+  ProductModel? sampleProduct;
+
+  bool isTableVisible = false;
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
       children: [
-        MyBarcodeScanner(
-          controller: barcodeController,
-          onBarcode: (barcode) {
-            // if (isValidBarcode(barcode)) {
-            setState(() {
-              isSearching = true;
-            });
-            ProductController().getProductByBarcode(barcode).then((value) {
-              setState(() {
-                productNameController.text = value.productName ?? "";
-                retailPriceController.text = value.retailPrice ?? "";
-                isSearching = false;
-                // value.prodId != null ? FocusScope.of(context).unfocus() : null;
-              });
-            });
-            // }
-          },
-        ),
-        Row(
-          children: [
-            Expanded(
-                flex: 2,
-                child: CustomTextField(
-                  hintText: "Product name",
-                  enabled: false,
-                  controller: productNameController,
-                )),
-            Expanded(
-                child: CustomTextField(
-              hintText: "Price",
-              enabled: false,
-              controller: retailPriceController,
-            )),
-          ],
-        ),
-        Row(
-          children: [
-            Expanded(
-                child: CustomTextField(
-              hintText: "Qty eg:- 1",
-              inputType: TextInputType.number,
-              controller: qtyController,
-            )),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: SizedBox(
-                  height: 60,
-                  child: GFButton(
-                    onPressed: () {
-                      setState(() {
-                        productList.add({
-                          'product': ProductModel(
-                            barcode: barcodeController.text,
-                            productName: productNameController.text,
-                            cost: retailPriceController.text,
-                          ),
-                          'qty': double.parse(qtyController.text.isEmpty
-                              ? "1"
-                              : qtyController.text)
-                        });
-                      });
-                    },
-                    text: "Add",
-                    type: GFButtonType.solid,
-                    fullWidthButton: true,
-                    blockButton: true,
-                  ),
-                ),
+        Visibility(
+          maintainState: true,
+          visible: !isTableVisible,
+          child: Column(
+            children: [
+              MyBarcodeScanner(
+                controller: barcodeController,
+                onBarcode: (barcode) {
+                  // if (isValidBarcode(barcode)) {
+                  setState(() {
+                    isSearching = true;
+                  });
+                  ProductController()
+                      .getProductByBarcode(barcode)
+                      .then((value) {
+                    setState(() {
+                      sampleProduct = value;
+                      productNameController.text = value.productName ?? "";
+                      retailPriceController.text = value.cost ?? "";
+                      unitController.text = value.uom ?? "";
+                      stockController.text = value.stock ?? "";
+                      priceController.text = value.retailPrice ?? "";
+                      barcodeViewController.text = value.barcode ?? '';
+                      isSearching = false;
+                      if ((value.prodId ?? '').isNotEmpty) {
+                        barcodeController.text = '';
+                      }
+                      // value.prodId != null ? FocusScope.of(context).unfocus() : null;
+                    });
+                  });
+                  // }
+                },
               ),
-            ),
-          ],
+              Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: CustomTextField(
+                      hintText: "Barcode",
+                      enabled: false,
+                      controller: barcodeViewController,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: CustomTextField(
+                      hintText: "Unit",
+                      enabled: false,
+                      controller: unitController,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: CustomTextField(
+                      style: const TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20),
+                      hintText: "Stock",
+                      enabled: false,
+                      controller: stockController,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: CustomTextField(
+                      hintText: "Retail price",
+                      enabled: false,
+                      controller: priceController,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                      flex: 2,
+                      child: CustomTextField(
+                        hintText: "Product name",
+                        enabled: false,
+                        controller: productNameController,
+                      )),
+                  Expanded(
+                      child: CustomTextField(
+                    hintText: "Cost",
+                    enabled: false,
+                    controller: retailPriceController,
+                  )),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                      child: CustomTextField(
+                    hintText: "Qty eg:- 1",
+                    inputType: TextInputType.number,
+                    controller: qtyController,
+                  )),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: SizedBox(
+                        height: 60,
+                        child: GFButton(
+                          onPressed: () {
+                            setState(() {
+                              if (sampleProduct != null) {
+                                productList.add({
+                                  'product': sampleProduct,
+                                  'qty': double.parse(qtyController.text.isEmpty
+                                      ? "1"
+                                      : qtyController.text)
+                                });
+                              }
+                              barcodeController.clear();
+                              productNameController.clear();
+                              retailPriceController.clear();
+                              barcodeViewController.clear();
+                              unitController.clear();
+                              stockController.clear();
+                              priceController.clear();
+                              qtyController.clear();
+                              focusNode.requestFocus();
+                            });
+                          },
+                          text: "Add",
+                          type: GFButtonType.solid,
+                          fullWidthButton: true,
+                          blockButton: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        Expanded(
+        Visibility(
+            visible: isTableVisible,
             child: SingleChildScrollView(
                 child: ProductDataTable(
-          listOfColumns: productList,
-          onRemove: (index) {
-            setState(() {
-              productList.removeAt(index);
-            });
-          },
-        ))),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            height: 60,
-            child: GFButton(
-              onPressed: () async {
-                final String entryId =
-                    await ProductController().writeStockTakenMaster();
-
-                productList.map((productMap) async {
-                  print('adding');
-                  ProductModel product = productMap['product'];
-                  await ProductController().writeStockTakenDetails(
-                      entryId: entryId,
-                      productId: product.prodId!,
-                      cost: product.cost!,
-                      qty: productMap['qty']);
-                });
-                print('completed');
+              listOfColumns: productList,
+              onRemove: (index) {
                 setState(() {
-                  productList.clear();
+                  productList.removeAt(index);
                 });
               },
-              text: "Submit",
-              type: GFButtonType.solid,
-              fullWidthButton: true,
-              blockButton: true,
+            ))),
+        Align(
+          alignment: Alignment.bottomLeft,
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: SizedBox(
+              height: 60,
+              width: 220,
+              child: GFButton(
+                onPressed: () async {
+                  final String entryId =
+                      await ProductController().writeStockTakenMaster();
+                  await Future.wait(productList.map((productMap) async {
+                    print('adding');
+                    ProductModel product = productMap['product'];
+                    print(product.prodId);
+                    await ProductController().writeStockTakenDetails(
+                        entryId: entryId,
+                        productId: product.prodId!,
+                        cost: product.cost!,
+                        qty: productMap['qty'].toString());
+                  }));
+                  await ProductController().writeStockFinish(entry: entryId);
+                  print('completed');
+                  setState(() {
+                    productList.clear();
+                  });
+                },
+                text: "Submit",
+                type: GFButtonType.solid,
+                fullWidthButton: true,
+                blockButton: true,
+              ),
             ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: FloatingActionButton(
+                onPressed: () {
+                  setState(() {
+                    isTableVisible = !isTableVisible;
+                  });
+                },
+                child: isTableVisible
+                    ? const Icon(Icons.arrow_circle_up)
+                    : const Icon(Icons.arrow_circle_down)),
           ),
         ),
       ],

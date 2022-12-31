@@ -7,12 +7,14 @@ class CustomTextField extends StatefulWidget {
       this.controller,
       this.inputType,
       this.enabled = true,
-      this.style});
+      this.style,
+      this.focusNode});
   final String hintText;
   final TextEditingController? controller;
   final TextInputType? inputType;
   final bool enabled;
   final TextStyle? style;
+  final FocusNode? focusNode;
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
@@ -30,6 +32,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
       child: TextField(
+        focusNode: widget.focusNode,
         style: widget.style,
         enabled: widget.enabled,
         keyboardType: widget.inputType ?? TextInputType.name,

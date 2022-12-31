@@ -21,6 +21,7 @@ class _ViewScannedProductScreenState extends State<ViewScannedProductScreen> {
   final TextEditingController stockController = TextEditingController();
   final TextEditingController uomController = TextEditingController();
   bool isSearching = false;
+  FocusNode barcodeFocus = FocusNode();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -33,6 +34,7 @@ class _ViewScannedProductScreenState extends State<ViewScannedProductScreen> {
             Expanded(
               flex: 2,
               child: MyBarcodeScanner(
+                focusNode: barcodeFocus,
                 controller: barcodeController,
                 onBarcode: (barcode) {
                   // if (isValidBarcode(barcode)) {
@@ -52,6 +54,7 @@ class _ViewScannedProductScreenState extends State<ViewScannedProductScreen> {
                       isSearching = false;
                       if ((value.prodId ?? '').isNotEmpty) {
                         barcodeController.text = '';
+                        barcodeFocus.unfocus();
                       }
                       // value.prodId != null ? FocusScope.of(context).unfocus() : null;
                     });

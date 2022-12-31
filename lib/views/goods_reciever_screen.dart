@@ -43,6 +43,8 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
 
   ProductModel? sampleProduct;
 
+  FocusNode quanityFocusNode = FocusNode();
+
   var isTableVisible = false;
   @override
   Widget build(BuildContext context) {
@@ -105,6 +107,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                       isSearching = false;
                       if ((value.prodId ?? '').isNotEmpty) {
                         barcodeController.text = '';
+                        quanityFocusNode.requestFocus();
                       }
                       // value.prodId != null
                       //     ? FocusScope.of(context).unfocus()
@@ -157,9 +160,9 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                     flex: 2,
                     child: CustomTextField(
                       style: const TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20),
+                        color: Colors.red,
+                        fontWeight: FontWeight.w600,
+                      ),
                       hintText: "Stock",
                       enabled: false,
                       controller: stockController,
@@ -179,6 +182,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                 children: [
                   Expanded(
                       child: CustomTextField(
+                    focusNode: quanityFocusNode,
                     hintText: "Qty eg:- 1",
                     inputType: TextInputType.number,
                     controller: qtyController,
@@ -187,7 +191,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: SizedBox(
-                        height: 60,
+                        height: 50,
                         child: GFButton(
                           onPressed: () {
                             setState(() {
@@ -238,7 +242,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
         Align(
           alignment: Alignment.bottomLeft,
           child: Padding(
-            padding: const EdgeInsets.all(18.0),
+            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 5),
             child: SizedBox(
               height: 60,
               width: 220,
@@ -283,7 +287,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
         Align(
           alignment: Alignment.bottomRight,
           child: Padding(
-            padding: const EdgeInsets.all(18.0),
+            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 5),
             child: FloatingActionButton(
                 onPressed: () {
                   setState(() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/types/gf_button_type.dart';
 import 'package:vanapp/widgets/custom_textfield.dart';
@@ -40,6 +41,9 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
   ProductModel? sampleProduct;
 
   bool isTableVisible = false;
+
+  FocusNode quanityFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -50,6 +54,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
           child: Column(
             children: [
               MyBarcodeScanner(
+                focusNode: focusNode,
                 controller: barcodeController,
                 onBarcode: (barcode) {
                   // if (isValidBarcode(barcode)) {
@@ -70,6 +75,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
                       isSearching = false;
                       if ((value.prodId ?? '').isNotEmpty) {
                         barcodeController.text = '';
+                        quanityFocusNode.requestFocus();
                       }
                       // value.prodId != null ? FocusScope.of(context).unfocus() : null;
                     });
@@ -142,6 +148,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
                 children: [
                   Expanded(
                       child: CustomTextField(
+                    focusNode: quanityFocusNode,
                     hintText: "Qty eg:- 1",
                     inputType: TextInputType.number,
                     controller: qtyController,

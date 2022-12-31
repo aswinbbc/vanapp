@@ -2,6 +2,8 @@ import 'package:vanapp/models/product_model.dart';
 import 'package:vanapp/utils/constants/utils.dart';
 import 'package:vanapp/utils/network_service.dart';
 
+import '../utils/constants/constant.dart';
+
 class ProductController {
   Future<ProductModel> getProductByBarcode(
     String barcode,
@@ -44,6 +46,7 @@ class ProductController {
     refNo = 'aa',
     systemId = '1',
   }) async {
+    appUserId = await Constants.userId;
     String inventoryId = await this.inventoryId;
     String zeroEntryId = await zeroStockEntryId;
     String entryDate = currentDate;
@@ -60,6 +63,7 @@ class ProductController {
     userId = '1',
   }) async {
     String entryDate = currentDate;
+    userId = await Constants.userId;
     print({supplierId, systemId, userId, entryDate});
 
     final List result = await getData(

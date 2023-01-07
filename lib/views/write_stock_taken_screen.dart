@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/types/gf_button_type.dart';
 import 'package:vanapp/widgets/custom_textfield.dart';
 import 'package:vanapp/widgets/my_barcode_scanner.dart';
-import 'package:vanapp/widgets/my_data_table.dart';
+import 'package:vanapp/widgets/product_data_table.dart';
 
 import '../controllers/product_controller.dart';
 import '../models/product_model.dart';
 
 class WriteStockScreen extends StatefulWidget {
   const WriteStockScreen({super.key});
-
+  String get title => 'Enter Stock';
   @override
   State<WriteStockScreen> createState() => _WriteStockScreenState();
 }
@@ -221,6 +220,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
                     print(product.prodId);
                     await ProductController().writeStockTakenDetails(
                         entryId: entryId,
+                        unitId: product.uomId,
                         productId: product.prodId!,
                         cost: product.cost!,
                         qty: productMap['qty'].toString());

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vanapp/views/goods_reciever_screen.dart';
+import 'package:vanapp/views/purchase_return_screen.dart';
 import 'package:vanapp/views/settings_screen.dart';
 import 'package:vanapp/views/view_scanned_product_screen.dart';
 import 'package:vanapp/views/write_stock_taken_screen.dart';
@@ -13,10 +14,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final List<Widget> screens = [
+  final List screens = [
     const ViewScannedProductScreen(),
     const GoodsRecieverScreen(),
     const WriteStockScreen(),
+    const PurchaseReturnScreen(),
     const SettingsScreen(),
   ];
   int currentIndex = 0;
@@ -37,42 +39,19 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             const ListTile(),
-            ListTile(
-              title: const Text('View product details'),
-              onTap: () {
-                closeDrawer();
-                setState(
-                  () => currentIndex = 0,
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('Goods reciever'),
-              onTap: () {
-                closeDrawer();
-                setState(
-                  () => currentIndex = 1,
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('Enter Stock'),
-              onTap: () {
-                closeDrawer();
-                setState(
-                  () => currentIndex = 2,
-                );
-              },
-            ),
-            ListTile(
-              title: const Text('Settings'),
-              onTap: () {
-                closeDrawer();
-                setState(
-                  () => currentIndex = 3,
-                );
-              },
-            ),
+            ...screens
+                .map(
+                  (e) => ListTile(
+                    title: Text(e.title),
+                    onTap: () {
+                      closeDrawer();
+                      setState(
+                        () => currentIndex = screens.indexOf(e),
+                      );
+                    },
+                  ),
+                )
+                .toList()
           ],
         ),
       ),

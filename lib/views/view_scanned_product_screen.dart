@@ -6,6 +6,7 @@ import 'package:vanapp/widgets/my_barcode_scanner.dart';
 
 class ViewScannedProductScreen extends StatefulWidget {
   const ViewScannedProductScreen({super.key});
+  String get title => 'View product details';
 
   @override
   State<ViewScannedProductScreen> createState() =>

@@ -5,7 +5,7 @@ import 'package:vanapp/controllers/supplier_controller.dart';
 import 'package:vanapp/models/supplier_model.dart';
 import 'package:vanapp/widgets/custom_textfield.dart';
 import 'package:vanapp/widgets/my_barcode_scanner.dart';
-import 'package:vanapp/widgets/my_data_table.dart';
+import 'package:vanapp/widgets/product_data_table.dart';
 import 'package:vanapp/widgets/my_dropdown.dart';
 
 import '../controllers/product_controller.dart';
@@ -13,6 +13,7 @@ import '../models/product_model.dart';
 
 class GoodsRecieverScreen extends StatefulWidget {
   const GoodsRecieverScreen({super.key});
+  String get title => 'Goods reciever';
 
   @override
   State<GoodsRecieverScreen> createState() => _GoodsRecieverScreenState();

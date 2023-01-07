@@ -5,7 +5,7 @@ import '../utils/constants/constant.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
-
+  String get title => 'Settings';
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }

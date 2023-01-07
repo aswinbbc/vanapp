@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class MyDropdown extends StatefulWidget {
-  const MyDropdown({super.key, required this.list, required this.controller});
+  const MyDropdown(
+      {super.key, required this.list, required this.controller, this.onchange});
   final List<String> list;
   final MyDropController controller;
-  
+  final Function(String?)? onchange;
+
   @override
   State<MyDropdown> createState() => _MyDropdownState();
 }
@@ -17,6 +19,7 @@ class _MyDropdownState extends State<MyDropdown> {
     dropdownValue = widget.list.first;
     controller = widget.controller;
     controller.value = dropdownValue;
+    widget.onchange != null ? widget.onchange!(dropdownValue) : null;
     super.initState();
   }
 
@@ -33,6 +36,7 @@ class _MyDropdownState extends State<MyDropdown> {
         ),
         onChanged: (String? value) {
           // This is called when the user selects an item.
+          widget.onchange != null ? widget.onchange!(value) : null;
           setState(() {
             dropdownValue = value!;
             controller.value = value;

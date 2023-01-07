@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:getwidget/components/button/gf_button.dart';
+import 'package:getwidget/getwidget.dart';
+import 'package:vanapp/utils/constants/colors.dart';
 import 'package:vanapp/utils/constants/utils.dart';
 import 'package:vanapp/views/home_screen.dart';
 import '../utils/constants/constant.dart';
@@ -241,9 +244,10 @@ class _LoginScreenState extends State<LoginScreen> {
       SizedBox(
         height: screenHeight * .075,
       ),
-      FormButton(
+      GFButton(
         text: "Log In",
         onPressed: submit,
+        shape: GFButtonShape.pills,
       ),
       SizedBox(
         height: screenHeight * .015,
@@ -252,7 +256,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   login(String? email, String? password, context) {
-    getData("AppUser/CheckUserExist",
+    loadServerData("AppUser/CheckUserExist",
             params: {
               "UserName": email,
               "Password": password,

@@ -36,10 +36,11 @@ class _MyDropdownState extends State<MyDropdown> {
         ),
         onChanged: (String? value) {
           // This is called when the user selects an item.
-          widget.onchange != null ? widget.onchange!(value) : null;
+
           setState(() {
             dropdownValue = value!;
             controller.value = value;
+            widget.onchange != null ? widget.onchange!(value) : null;
           });
         },
         items: widget.list.map<DropdownMenuItem<String>>((String value) {

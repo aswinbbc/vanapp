@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vanapp/views/home_screen.dart';
 import 'package:vanapp/views/login.dart';
 
 void main() {

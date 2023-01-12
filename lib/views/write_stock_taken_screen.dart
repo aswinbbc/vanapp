@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/types/gf_button_type.dart';
+import 'package:vanapp/utils/constants/utils.dart';
 import 'package:vanapp/widgets/custom_textfield.dart';
 import 'package:vanapp/widgets/my_barcode_scanner.dart';
 import 'package:vanapp/widgets/product_data_table.dart';
@@ -211,26 +212,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
               height: 60,
               width: 220,
               child: GFButton(
-                onPressed: () async {
-                  final String entryId =
-                      await ProductController().writeStockTakenMaster();
-                  await Future.wait(productList.map((productMap) async {
-                    print('adding');
-                    ProductModel product = productMap['product'];
-                    print(product.prodId);
-                    await ProductController().writeStockTakenDetails(
-                        entryId: entryId,
-                        unitId: product.uomId,
-                        productId: product.prodId!,
-                        cost: product.cost!,
-                        qty: productMap['qty'].toString());
-                  }));
-                  await ProductController().writeStockFinish(entry: entryId);
-                  print('completed');
-                  setState(() {
-                    productList.clear();
-                  });
-                },
+                onPressed: submitStockTaken,
                 text: "Submit",
                 type: GFButtonType.solid,
                 fullWidthButton: true,
@@ -256,5 +238,26 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
         ),
       ],
     );
+  }
+
+  void submitStockTaken() async {
+    if (productList.isNotEmpty) {
+      final String entryId = await ProductController().writeStockTakenMaster();
+      await Future.wait(productList.map((productMap) async {
+        ProductModel product = productMap['product'];
+        await ProductController().writeStockTakenDetails(
+            entryId: entryId,
+            unitId: product.uomId,
+            productId: product.prodId!,
+            cost: product.cost!,
+            qty: productMap['qty'].toString());
+      }));
+      await ProductController().writeStockFinish(entry: entryId);
+      setState(() {
+        productList.clear();
+      });
+    } else {
+      showToast('empty list...');
+    }
   }
 }

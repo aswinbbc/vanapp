@@ -8,7 +8,7 @@ class Constants {
   // static const BASE_URL = "https://192.168.43.116:90/";
   // static String BASE_URL = "http://${await _ip}:90/api/";
 
-  static Future<String> get BASE_URL async => "http://${await ip}:92/api/";
+  static Future<String> get baseURL async => "http://${await ip}:92/api/";
 
   static Future<String> get userId async {
     // Obtain shared preferences.

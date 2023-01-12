@@ -3,6 +3,7 @@ import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/types/gf_button_type.dart';
 import 'package:vanapp/controllers/supplier_controller.dart';
 import 'package:vanapp/models/supplier_model.dart';
+import 'package:vanapp/utils/constants/utils.dart';
 import 'package:vanapp/widgets/custom_textfield.dart';
 import 'package:vanapp/widgets/my_barcode_scanner.dart';
 import 'package:vanapp/widgets/product_data_table.dart';
@@ -248,35 +249,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
               height: 60,
               width: 220,
               child: GFButton(
-                onPressed: () async {
-                  final String supplier = suppliers
-                      .where(
-                          (element) => element.toString() == controller.value)
-                      .first
-                      .clientId!;
-                  final String entryId = await ProductController()
-                      .writeGrnMaster(supplierId: supplier);
-                  print(entryId);
-                  final pController = ProductController();
-
-                  await Future.wait(productList.map((productMap) async {
-                    ProductModel product = productMap['product'];
-                    print({'product order:', product.productName});
-                    await pController.writeGrnDetails(
-                        entryId: entryId,
-                        uomName: product.uom,
-                        uomId: product.uomId,
-                        productId: product.prodId!,
-                        cost: product.cost!,
-                        qty: productMap['qty'].toString());
-                  }));
-                  print({
-                    'completed',
-                  });
-                  setState(() {
-                    productList.clear();
-                  });
-                },
+                onPressed: submitGRN,
                 text: "Submit",
                 type: GFButtonType.solid,
                 fullWidthButton: true,
@@ -302,5 +275,33 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
         ),
       ],
     );
+  }
+
+  void submitGRN() async {
+    if (productList.isNotEmpty) {
+      final String supplier = suppliers
+          .where((element) => element.toString() == controller.value)
+          .first
+          .clientId!;
+      final String entryId =
+          await ProductController().writeGrnMaster(supplierId: supplier);
+      final pController = ProductController();
+
+      await Future.wait(productList.map((productMap) async {
+        ProductModel product = productMap['product'];
+        await pController.writeGrnDetails(
+            entryId: entryId,
+            uomName: product.uom,
+            uomId: product.uomId,
+            productId: product.prodId!,
+            cost: product.cost!,
+            qty: productMap['qty'].toString());
+      }));
+      setState(() {
+        productList.clear();
+      });
+    } else {
+      showToast('empty list...');
+    }
   }
 }

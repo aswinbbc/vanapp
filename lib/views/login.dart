@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/getwidget.dart';
-import 'package:vanapp/utils/constants/colors.dart';
 import 'package:vanapp/utils/constants/utils.dart';
 import 'package:vanapp/views/home_screen.dart';
 import '../utils/constants/constant.dart';
 import '../utils/network_service.dart';
-import '/widgets/form_button.dart';
 import '/widgets/input_field.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -52,9 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool validate() {
     resetErrorText();
 
-    RegExp emailExp = RegExp(
-        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
-
     bool isValid = true;
     if (email.isEmpty) {
       setState(() {
@@ -81,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildBody() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 30),
+      padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
               await launchUrl(
                   Uri.parse("https://www.amalgamatetechnologies.com/"));
             },
-            child: AutoSizeText(
+            child: const AutoSizeText(
               'AMALGAMATE TECHNOLOGIES',
               maxLines: 1,
               style: TextStyle(
@@ -100,8 +94,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-          Divider(color: Colors.black),
-          AutoSizeText.rich(
+          const Divider(color: Colors.black),
+          const AutoSizeText.rich(
             TextSpan(
               children: [
                 TextSpan(
@@ -213,8 +207,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return [
       SizedBox(height: screenHeight * .05),
       Visibility(
-        child: Center(child: CircularProgressIndicator()),
         visible: checker,
+        child: const Center(child: CircularProgressIndicator()),
       ),
       InputField(
         onChanged: (value) {

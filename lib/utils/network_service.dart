@@ -9,10 +9,10 @@ Future loadServerData(String url,
   final http.Response result;
 
   if (post) {
-    result = await http.post(Uri.parse("${await Constants.BASE_URL}$url"),
+    result = await http.post(Uri.parse("${await Constants.baseURL}$url"),
         body: params); //https://hosted_url.com/login_api
   } else {
-    result = await http.get(Uri.parse("${await Constants.BASE_URL}$url"));
+    result = await http.get(Uri.parse("${await Constants.baseURL}$url"));
   }
   if (result.statusCode == 200) {
     final data = result.body;

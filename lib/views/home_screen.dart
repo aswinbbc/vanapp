@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vanapp/views/goods_reciever_screen.dart';
-import 'package:vanapp/views/purchase_return_screen.dart';
+import 'package:vanapp/views/purchase_return/purchase_return_screen.dart';
 import 'package:vanapp/views/settings_screen.dart';
 import 'package:vanapp/views/view_scanned_product_screen.dart';
 import 'package:vanapp/views/write_stock_taken_screen.dart';
@@ -33,7 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(),
+      appBar: AppBar(
+        toolbarHeight: 40,
+      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,

@@ -61,7 +61,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
                   setState(() {
                     isSearching = true;
                   });
-                  ProductController()
+                  StockManagerController()
                       .getProductByBarcode(barcode)
                       .then((value) {
                     setState(() {
@@ -242,17 +242,18 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
 
   void submitStockTaken() async {
     if (productList.isNotEmpty) {
-      final String entryId = await ProductController().writeStockTakenMaster();
+      final String entryId =
+          await StockManagerController().writeStockTakenMaster();
       await Future.wait(productList.map((productMap) async {
         ProductModel product = productMap['product'];
-        await ProductController().writeStockTakenDetails(
+        await StockManagerController().writeStockTakenDetails(
             entryId: entryId,
             unitId: product.uomId,
             productId: product.prodId!,
             cost: product.cost!,
             qty: productMap['qty'].toString());
       }));
-      await ProductController().writeStockFinish(entry: entryId);
+      await StockManagerController().writeStockFinish(entry: entryId);
       setState(() {
         productList.clear();
       });

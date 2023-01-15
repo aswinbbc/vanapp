@@ -84,13 +84,15 @@ class _PurchaseReturnScreenState extends State<PurchaseReturnScreen> {
             )),
           ],
         ),
-        SingleChildScrollView(
-            child: PurchaseInvoiceTable(
-          list: list,
-          onClick: (index) {
-            navigateToAddPage(context);
-          },
-        )),
+        Expanded(
+          child: SingleChildScrollView(
+              child: PurchaseInvoiceTable(
+            list: list,
+            onClick: (index) {
+              navigateToAddPage(context);
+            },
+          )),
+        ),
       ],
     );
   }
@@ -114,7 +116,7 @@ class _PurchaseReturnScreenState extends State<PurchaseReturnScreen> {
         .where((element) => element.toString() == controller.value)
         .first
         .clientId!;
-    ProductController()
+    StockManagerController()
         .getCreditPurchaseinvoices(clientId: supplier)
         .then((value) {
       setState(() {

@@ -69,7 +69,7 @@ class _AddPurchaseReturnScreenState extends State<AddPurchaseReturnScreen> {
                     setState(() {
                       isSearching = true;
                     });
-                    ProductController()
+                    StockManagerController()
                         .getProductByBarcode(barcode)
                         .then((value) {
                       setState(() {
@@ -284,7 +284,7 @@ class _AddPurchaseReturnScreenState extends State<AddPurchaseReturnScreen> {
   void submitPurchaseReturn() async {
     if (productList.isNotEmpty) {
       final String entryId =
-          await ProductController().writePurchaseReturnMaster(
+          await StockManagerController().writePurchaseReturnMaster(
         netTotal: total.toString(),
         recipt:
             widget.paymentMode == 'Cash' ? total.toStringAsFixed(2) : '0.00',
@@ -294,7 +294,7 @@ class _AddPurchaseReturnScreenState extends State<AddPurchaseReturnScreen> {
       await Future.wait(productList.map((productMap) async {
         ProductModel product = productMap['product'];
 
-        await ProductController().writePurchaseReturnDetails(
+        await StockManagerController().writePurchaseReturnDetails(
             salesId: entryId,
             uomName: product.uom,
             productId: product.prodId!,

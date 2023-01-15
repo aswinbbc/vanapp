@@ -94,7 +94,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                   setState(() {
                     isSearching = true;
                   });
-                  ProductController()
+                  StockManagerController()
                       .getProductByBarcode(barcode)
                       .then((value) {
                     setState(() {
@@ -284,8 +284,8 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
           .first
           .clientId!;
       final String entryId =
-          await ProductController().writeGrnMaster(supplierId: supplier);
-      final pController = ProductController();
+          await StockManagerController().writeGrnMaster(supplierId: supplier);
+      final pController = StockManagerController();
 
       await Future.wait(productList.map((productMap) async {
         ProductModel product = productMap['product'];

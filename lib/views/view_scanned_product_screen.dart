@@ -42,7 +42,7 @@ class _ViewScannedProductScreenState extends State<ViewScannedProductScreen> {
                   setState(() {
                     isSearching = true;
                   });
-                  ProductController()
+                  StockManagerController()
                       .getProductByBarcode(barcode)
                       .then((value) {
                     setState(() {

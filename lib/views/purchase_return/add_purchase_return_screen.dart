@@ -10,8 +10,13 @@ import '../../widgets/product_data_table.dart';
 
 class AddPurchaseReturnScreen extends StatefulWidget {
   const AddPurchaseReturnScreen(
-      {super.key, required this.supplierId, required this.paymentMode});
+      {super.key,
+      required this.supplierId,
+      required this.paymentMode,
+      this.purchaseId,
+      this.purchaseType});
   final String supplierId, paymentMode;
+  final String? purchaseId, purchaseType;
 
   @override
   State<AddPurchaseReturnScreen> createState() =>
@@ -285,6 +290,8 @@ class _AddPurchaseReturnScreenState extends State<AddPurchaseReturnScreen> {
     if (productList.isNotEmpty) {
       final String entryId =
           await StockManagerController().writePurchaseReturnMaster(
+        purchaseId: widget.purchaseId ?? '0',
+        purchaseType: widget.purchaseType ?? 'nil',
         netTotal: total.toString(),
         recipt:
             widget.paymentMode == 'Cash' ? total.toStringAsFixed(2) : '0.00',

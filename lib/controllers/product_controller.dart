@@ -1,5 +1,8 @@
+import 'package:vanapp/models/brand_model.dart';
+import 'package:vanapp/models/category_model.dart';
 import 'package:vanapp/models/credit_purchase_invoice_model.dart';
 import 'package:vanapp/models/product_model.dart';
+import 'package:vanapp/models/uom_model.dart';
 import 'package:vanapp/utils/constants/utils.dart';
 import 'package:vanapp/utils/network_service.dart';
 
@@ -110,13 +113,15 @@ class StockManagerController {
     required String supplierId,
     required String netTotal,
     required String recipt,
+    required String purchaseId,
+    required String purchaseType,
     systemId = '1',
     userId = '1',
   }) async {
     String entryDate = currentDate;
     userId = await Constants.userId;
     final List result = await loadServerData(
-        "PurchaseReturn/WritePurchaseReturnMaster?system_id=$systemId&entry_date=$entryDate&supplier_id=$supplierId&user_id=$userId&discount=0&other_charges=0&net_total=$netTotal&receipt=$recipt&ref_no=aa&narration=nil");
+        "PurchaseReturn/WritePurchaseReturnMaster?system_id=$systemId&entry_date=$entryDate&supplier_id=$supplierId&user_id=$userId&discount=0&other_charges=0&net_total=$netTotal&receipt=$recipt&ref_no=aa&narration=nil&purchase_id=$purchaseId&purchase_type=$purchaseType");
     await loadServerData(
         "PurchaseReturn/AccountsPosting?entry_date=$entryDate&supplier_id=$supplierId&narration=nil&return_amount=$netTotal&receipt_amount=$recipt&system_id=$systemId&pr_entry_id=${result.first['BillID']}&pr_entry_no=${result.first['bill_no']}");
     return result.first['bill_no'];
@@ -139,4 +144,46 @@ class StockManagerController {
   //--purchase return
 }
 
-class ProductController {}
+class ProductController {
+  Future<List<UOMModel>> getUOMs() async {
+    final List result = await loadServerData("product/GetAllUoMList");
+
+    return result.map((json) => UOMModel.fromJson(json)).toList();
+  }
+
+  Future<List<CategoryModel>> getCategories() async {
+    final List result = await loadServerData("product/GetAllCategory");
+
+    return result.map((json) => CategoryModel.fromJson(json)).toList();
+  }
+
+  Future<List<BrandModel>> getbrands() async {
+    final List result = await loadServerData("product/GetAllBrand");
+
+    return result.map((json) => BrandModel.fromJson(json)).toList();
+  }
+
+  Future<bool> isBarcodeExist(String barcode) async {
+    final List result =
+        await loadServerData("product/BarcodeExistCheck?barcode=$barcode");
+
+    return result.first['status'] == 'true';
+  }
+
+  Future<String> createProduct(
+      {required String barcode,
+      required prodName,
+      required String catId,
+      required String brandId,
+      String systemId = "1",
+      required String uomId,
+      required String uomName,
+      required String purchasePrice,
+      required String retailPrice}) async {
+    String userId = await Constants.userId;
+    final List result = await loadServerData(
+        "product/WriteProduct?productName=$prodName&category_id=$catId&brand_id=$brandId&barcode=$barcode&system_id=$systemId&user_id=$userId&uom_id=$uomId&uom_name=$uomName&purchase_price=$purchasePrice&retail_price=$retailPrice");
+
+    return result.first['status'];
+  }
+}

@@ -89,7 +89,8 @@ class _PurchaseReturnScreenState extends State<PurchaseReturnScreen> {
               child: PurchaseInvoiceTable(
             list: list,
             onClick: (index) {
-              navigateToAddPage(context);
+              navigateToAddPage(
+                  context, list[index].billId, list[index].billType);
             },
           )),
         ),
@@ -97,7 +98,8 @@ class _PurchaseReturnScreenState extends State<PurchaseReturnScreen> {
     );
   }
 
-  navigateToAddPage(BuildContext context) async {
+  navigateToAddPage(BuildContext context,
+      [String? purchaseId, String? purchaseType]) async {
     final String supplierId = suppliers
         .where((element) => element.toString() == controller.value)
         .first
@@ -106,7 +108,10 @@ class _PurchaseReturnScreenState extends State<PurchaseReturnScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => AddPurchaseReturnScreen(
-              supplierId: supplierId, paymentMode: groups[currentGroupIndex]),
+              supplierId: supplierId,
+              paymentMode: groups[currentGroupIndex],
+              purchaseId: purchaseId,
+              purchaseType: purchaseType),
         ));
     currentGroupIndex = 0;
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vanapp/views/add_product_screen.dart';
 import 'package:vanapp/views/goods_reciever_screen.dart';
 import 'package:vanapp/views/purchase_return/purchase_return_screen.dart';
 import 'package:vanapp/views/settings_screen.dart';
@@ -16,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List screens = [
     const ViewScannedProductScreen(),
+    const AddProductScreen(),
     const GoodsRecieverScreen(),
     const WriteStockScreen(),
     const PurchaseReturnScreen(),

@@ -32,22 +32,28 @@ class _AddProductScreenState extends State<AddProductScreen> {
   List<BrandModel> brands = [];
 
   FocusNode barcodeFocus = FocusNode();
+  FocusNode retailFocus = FocusNode();
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(children: [
         Row(
           children: [
-            Expanded(
-              child: CustomTextField(
-                hintText: "Product",
-                controller: productNameController,
-              ),
+            Visibility(
+              visible: isLoading,
+              child: const LinearProgressIndicator(),
             ),
             Expanded(
               child: MyBarcodeScanner(
                 focusNode: barcodeFocus,
                 controller: barcodeController,
+              ),
+            ),
+            Expanded(
+              child: CustomTextField(
+                hintText: "Product",
+                controller: productNameController,
               ),
             ),
           ],
@@ -67,14 +73,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         if (snapshot.hasData) {
                           categories = snapshot.data!;
                         }
-                        return snapshot.hasData
-                            ? MyDropdown(
-                                list: snapshot.data!
-                                    .map((supplier) => supplier.toString())
-                                    .toList(),
-                                controller: categoryController,
-                              )
-                            : const Text("waiting.....");
+                        if (snapshot.hasData) {
+                          return MyDropdown(
+                            list: snapshot.data!
+                                .map((supplier) => supplier.toString())
+                                .toList(),
+                            controller: categoryController,
+                          );
+                        } else {
+                          return const Text("waiting.....");
+                        }
                       })),
             ],
           ),
@@ -137,44 +145,133 @@ class _AddProductScreenState extends State<AddProductScreen> {
           children: [
             Expanded(
               child: CustomTextField(
-                hintText: "Retail Price",
-                controller: retailPriceController,
+                hintText: "opening cost",
+                focusNode: retailFocus,
+                controller: purchasePriceController,
               ),
             ),
             Expanded(
               child: CustomTextField(
-                hintText: "Purchase price",
-                controller: purchasePriceController,
+                hintText: "Retail Price",
+                controller: retailPriceController,
               ),
             ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: SizedBox(
-            height: 60,
-            width: double.infinity,
-            child: GFButton(
-              onPressed: () {
-                ProductController controllerProduct = ProductController();
-                controllerProduct
-                    .isBarcodeExist(barcodeController.text)
-                    .then((value) {
-                  if (value) {
-                    showToast('barcode already exist');
-                  } else {
-                    controllerProduct.createProduct(barcode: barcodeController.text, prodName: productNameController.text, catId: , brandId: brandId, uomId: uomId, uomName: uomName, purchasePrice: purchasePrice, retailPrice: retailPrice)
-                  }
-                });
-              },
-              text: "Submit",
-              type: GFButtonType.solid,
-              fullWidthButton: true,
-              blockButton: true,
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: SizedBox(
+                  height: 60,
+                  width: double.infinity,
+                  child: GFButton(
+                    onPressed: clear,
+                    text: "clear",
+                    type: GFButtonType.transparent,
+                    fullWidthButton: true,
+                    blockButton: true,
+                  ),
+                ),
+              ),
             ),
-          ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: SizedBox(
+                  height: 60,
+                  width: double.infinity,
+                  child: GFButton(
+                    onPressed: submit,
+                    text: "Submit",
+                    type: GFButtonType.solid,
+                    fullWidthButton: true,
+                    blockButton: true,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ]),
     );
+  }
+
+  void submit() {
+    var purchasePrice = purchasePriceController.text.isEmpty
+        ? '0'
+        : purchasePriceController.text;
+    var retailPrice =
+        retailPriceController.text.isEmpty ? '0' : retailPriceController.text;
+
+    if (barcodeController.text.isEmpty) {
+      showToast('barcode is empty..');
+      barcodeFocus.requestFocus();
+      return;
+    }
+    try {
+      if (int.parse(purchasePrice) > int.parse(retailPrice)) {
+        showToast('retail price must be greater');
+        return;
+      }
+    } catch (e) {
+      showToast('not a valid price');
+      return;
+    }
+
+    ProductController controllerProduct = ProductController();
+    controllerProduct
+        .isBarcodeExist(barcodeController.text)
+        .then((value) async {
+      if (value) {
+        showToast('barcode already exist');
+      } else {
+        if (purchasePriceController.text.isEmpty) {
+          showToast('purchase price must not be empty');
+
+          return;
+        }
+        if (retailPriceController.text.isEmpty) {
+          showToast('retail price must not be empty');
+
+          return;
+        }
+        String catId = categories
+            .where((element) => element.toString() == categoryController.value)
+            .first
+            .ctId!;
+        String brandId = brands
+            .where((element) => element.toString() == brandController.value)
+            .first
+            .brandId!;
+        String uomId = uoms
+            .where((element) => element.toString() == uomController.value)
+            .first
+            .uomId!;
+        await controllerProduct.createProduct(
+            barcode: barcodeController.text,
+            prodName: productNameController.text,
+            catId: catId,
+            brandId: brandId,
+            uomId: uomId,
+            uomName: uomController.value,
+            purchasePrice: purchasePrice,
+            retailPrice: retailPrice);
+        showToast('inserted');
+        clear();
+      }
+    });
+  }
+
+  void clear() {
+    barcodeController.clear();
+    retailPriceController.clear();
+    purchasePriceController.clear();
+    productNameController.clear();
+    categoryController.value = categories.first.toString();
+    uomController.value = "PCS";
+    brandController.value = brands.first.toString();
+    barcodeFocus.requestFocus();
   }
 }

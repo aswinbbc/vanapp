@@ -48,10 +48,18 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
   FocusNode quanityFocusNode = FocusNode();
 
   var isTableVisible = false;
+
+  var isSubmitted = false;
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        Visibility(
+          visible: isSubmitted,
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
         Visibility(
           maintainState: true,
           visible: !isTableVisible,
@@ -278,6 +286,9 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
   }
 
   void submitGRN() async {
+    setState(() {
+      isSubmitted = true;
+    });
     if (productList.isNotEmpty) {
       final String supplier = suppliers
           .where((element) => element.toString() == controller.value)
@@ -299,9 +310,13 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
       }));
       setState(() {
         productList.clear();
+        isSubmitted = false;
       });
     } else {
       showToast('empty list...');
+      setState(() {
+        isSubmitted = false;
+      });
     }
   }
 }

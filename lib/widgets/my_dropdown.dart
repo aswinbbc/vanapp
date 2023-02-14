@@ -23,6 +23,14 @@ class _MyDropdownState extends State<MyDropdown> {
     super.initState();
   }
 
+  setValue(String value) {
+    if (value.isNotEmpty) {
+      setState(() {
+        dropdownValue = value;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(

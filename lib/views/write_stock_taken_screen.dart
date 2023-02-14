@@ -44,10 +44,18 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
 
   FocusNode quanityFocusNode = FocusNode();
 
+  var isSubmitted = false;
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        Visibility(
+          visible: isSubmitted,
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
         Visibility(
           maintainState: true,
           visible: !isTableVisible,
@@ -241,6 +249,9 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
   }
 
   void submitStockTaken() async {
+    setState(() {
+      isSubmitted = true;
+    });
     if (productList.isNotEmpty) {
       final String entryId =
           await StockManagerController().writeStockTakenMaster();
@@ -256,9 +267,13 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
       await StockManagerController().writeStockFinish(entry: entryId);
       setState(() {
         productList.clear();
+        isSubmitted = false;
       });
     } else {
       showToast('empty list...');
+      setState(() {
+        isSubmitted = false;
+      });
     }
   }
 }

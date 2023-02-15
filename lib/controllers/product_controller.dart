@@ -57,7 +57,9 @@ class StockManagerController {
       required String cost,
       String qty = '1'}) async {
     final List result = await loadServerData(
-        "StockTaken/WriteStockTakenDetails?entry_id=$entryId&product_id=$productId&unit_id=$unitId&cost=$cost&qty=$qty");
+            "StockTaken/WriteStockTakenDetails?entry_id=$entryId&product_id=$productId&unit_id=$unitId&cost=$cost&qty=$qty") ??
+        ['error'];
+    print(result);
     return result.first.toString();
   }
 
@@ -93,10 +95,10 @@ class StockManagerController {
       uomId = '1',
       required String cost,
       String qty = '1'}) async {
-    final List result = await loadServerData(
+    final List? result = await loadServerData(
         "GoodsReceipt/WriteGRNDetails?slno=1&entryid=$entryId&product_id=$productId&qty=$qty&inv_code=Company&uom_name=$uomName&uom_id=$uomId&price=$cost");
-
-    return result.first.toString();
+    print(result);
+    return result != null ? result.first.toString() : 'error';
   }
 
   //--GRN

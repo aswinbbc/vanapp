@@ -257,7 +257,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
               height: 60,
               width: 220,
               child: GFButton(
-                onPressed: submitGRN,
+                onPressed: !isSubmitted ? submitGRN : null,
                 text: "Submit",
                 type: GFButtonType.solid,
                 fullWidthButton: true,
@@ -289,6 +289,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
     setState(() {
       isSubmitted = true;
     });
+
     if (productList.isNotEmpty) {
       final String supplier = suppliers
           .where((element) => element.toString() == controller.value)

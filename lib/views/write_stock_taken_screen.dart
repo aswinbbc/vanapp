@@ -220,7 +220,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
               height: 60,
               width: 220,
               child: GFButton(
-                onPressed: submitStockTaken,
+                onPressed: !isSubmitted ? submitStockTaken : null,
                 text: "Submit",
                 type: GFButtonType.solid,
                 fullWidthButton: true,

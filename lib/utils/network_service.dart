@@ -16,7 +16,7 @@ Future loadServerData(String url,
   }
   if (result.statusCode == 200) {
     final data = result.body;
-
+    print({'@$url', data});
     return jsonDecode(data);
   }
 }

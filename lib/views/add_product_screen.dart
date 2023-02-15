@@ -33,7 +33,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   FocusNode barcodeFocus = FocusNode();
   FocusNode retailFocus = FocusNode();
-  bool isLoading = false;
+  bool isSubmitted = false;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -41,7 +41,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
         Row(
           children: [
             Visibility(
-              visible: isLoading,
+              visible: isSubmitted,
               child: const LinearProgressIndicator(),
             ),
             Expanded(
@@ -183,7 +183,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   height: 60,
                   width: double.infinity,
                   child: GFButton(
-                    onPressed: submit,
+                    onPressed: !isSubmitted ? submit : null,
                     text: "Submit",
                     type: GFButtonType.solid,
                     fullWidthButton: true,
@@ -199,6 +199,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   void submit() {
+    setState(() {
+      isSubmitted = true;
+    });
     var purchasePrice = purchasePriceController.text.isEmpty
         ? '0'
         : purchasePriceController.text;
@@ -265,6 +268,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   void clear() {
+    setState(() {
+      isSubmitted = false;
+    });
     barcodeController.clear();
     retailPriceController.clear();
     purchasePriceController.clear();

@@ -8,7 +8,8 @@ class Constants {
   // static const BASE_URL = "https://192.168.43.116:90/";
   // static String BASE_URL = "http://${await _ip}:90/api/";
 
-  static Future<String> get baseURL async => "http://${await ip}:92/api/";
+  static Future<String> get baseURL async =>
+      "http://${await ip}:${await port}/api/";
 
   static Future<String> get userId async {
     // Obtain shared preferences.
@@ -22,10 +23,22 @@ class Constants {
     return prefs.getString('ip') ?? "0.0.0.0";
   }
 
+  static Future<String> get port async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('port') ?? "90";
+  }
+
   Future<bool> setIp(String ip) async {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
     return prefs.setString('ip', ip);
+  }
+
+  Future<bool> setPORT(String port) async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.setString('port', port);
   }
 
   static Future<String> get userName async {

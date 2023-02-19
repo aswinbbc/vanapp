@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:getwidget/components/button/gf_button.dart';
 import 'package:vanapp/utils/constants/utils.dart';
 
 import '../utils/constants/constant.dart';
+import '../widgets/custom_textfield.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -12,11 +14,14 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final ipController = TextEditingController();
+  final portController = TextEditingController();
 
   @override
   initState() {
     super.initState();
     Constants.ip.then((value) => setState((() => ipController.text = value)));
+    Constants.port
+        .then((value) => setState((() => portController.text = value)));
   }
 
   @override
@@ -26,21 +31,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(children: [
+            Text("IP:"),
             Expanded(
-                child: TextField(
-              decoration:
-                  const InputDecoration(hintText: "Enter server IP here"),
-              controller: ipController,
+                flex: 2,
+                child: CustomTextField(
+                  hintText: "Enter server IP here",
+                  controller: ipController,
+                )),
+            Text(" PORT:"),
+            Expanded(
+                child: CustomTextField(
+              hintText: "eg:- 90",
+              controller: portController,
             )),
-            ElevatedButton(
-                onPressed: () {
-                  Constants()
-                      .setIp(ipController.text)
-                      .then((value) => showToast("ip saved, please restart"));
-                },
-                child: const Text('Save')),
           ]),
         ),
+        GFButton(
+            blockButton: true,
+            onPressed: () async {
+              await Constants().setPORT(portController.text);
+              Constants()
+                  .setIp(ipController.text)
+                  .then((value) => showToast("saved, please restart"));
+            },
+            child: const Text('Save')),
       ],
     );
   }

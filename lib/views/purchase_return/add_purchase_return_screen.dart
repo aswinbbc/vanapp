@@ -53,6 +53,8 @@ class _AddPurchaseReturnScreenState extends State<AddPurchaseReturnScreen> {
 
   var total = 0.0;
 
+  var isSubmitted = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,6 +63,12 @@ class _AddPurchaseReturnScreenState extends State<AddPurchaseReturnScreen> {
       ),
       body: Stack(
         children: [
+          Visibility(
+            visible: isSubmitted,
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
           Visibility(
             maintainState: true,
             visible: !isTableVisible,
@@ -257,7 +265,7 @@ class _AddPurchaseReturnScreenState extends State<AddPurchaseReturnScreen> {
                 height: 60,
                 width: 220,
                 child: GFButton(
-                  onPressed: submitPurchaseReturn,
+                  onPressed: !isSubmitted ? submitPurchaseReturn : null,
                   text: "Submit",
                   type: GFButtonType.solid,
                   fullWidthButton: true,
@@ -288,6 +296,9 @@ class _AddPurchaseReturnScreenState extends State<AddPurchaseReturnScreen> {
 
   void submitPurchaseReturn() async {
     if (productList.isNotEmpty) {
+      setState(() {
+        isSubmitted = true;
+      });
       final String entryId =
           await StockManagerController().writePurchaseReturnMaster(
         purchaseId: widget.purchaseId ?? '0',
@@ -313,6 +324,7 @@ class _AddPurchaseReturnScreenState extends State<AddPurchaseReturnScreen> {
       setState(() {
         productList.clear();
         calculateTotal();
+        isSubmitted = false;
       });
     } else {
       showToast('empty list....');

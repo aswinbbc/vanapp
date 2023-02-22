@@ -126,7 +126,7 @@ class StockManagerController {
         "PurchaseReturn/WritePurchaseReturnMaster?system_id=$systemId&entry_date=$entryDate&supplier_id=$supplierId&user_id=$userId&discount=0&other_charges=0&net_total=$netTotal&receipt=$recipt&ref_no=aa&narration=nil&purchase_id=$purchaseId&purchase_type=$purchaseType");
     await loadServerData(
         "PurchaseReturn/AccountsPosting?entry_date=$entryDate&supplier_id=$supplierId&narration=nil&return_amount=$netTotal&receipt_amount=$recipt&system_id=$systemId&pr_entry_id=${result.first['BillID']}&pr_entry_no=${result.first['bill_no']}");
-    return result.first['bill_no'];
+    return result.first['BillID'];
   }
 
   Future<String> writePurchaseReturnDetails(

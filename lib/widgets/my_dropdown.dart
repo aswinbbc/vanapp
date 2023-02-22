@@ -34,6 +34,7 @@ class _MyDropdownState extends State<MyDropdown> {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
+        isExpanded: true,
         value: dropdownValue,
         icon: const Icon(Icons.arrow_downward),
         elevation: 16,
@@ -54,7 +55,11 @@ class _MyDropdownState extends State<MyDropdown> {
         items: widget.list.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
-            child: Text(value),
+            child: Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.fade,
+            ),
           );
         }).toList());
   }

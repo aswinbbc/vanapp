@@ -45,20 +45,22 @@ class _ViewScannedProductScreenState extends State<ViewScannedProductScreen> {
                   StockManagerController()
                       .getProductByBarcode(barcode)
                       .then((value) {
-                    setState(() {
-                      productNameController.text = value.productName ?? "";
-                      uomController.text = value.uom ?? "";
-                      retailPriceController.text = value.retailPrice ?? "";
-                      stockController.text = value.stock ?? "";
-                      descriptionController.text = value.prodCode ?? "";
-                      barcodeViewController.text = value.barcode ?? '';
-                      isSearching = false;
-                      if ((value.prodId ?? '').isNotEmpty) {
-                        barcodeController.text = '';
-                        barcodeFocus.unfocus();
-                      }
-                      // value.prodId != null ? FocusScope.of(context).unfocus() : null;
-                    });
+                    if (value.prodId != null) {
+                      setState(() {
+                        productNameController.text = value.productName ?? "";
+                        uomController.text = value.uom ?? "";
+                        retailPriceController.text = value.retailPrice ?? "";
+                        stockController.text = value.stock ?? "";
+                        descriptionController.text = value.prodCode ?? "";
+                        barcodeViewController.text = value.barcode ?? '';
+                        isSearching = false;
+                        if ((value.prodId ?? '').isNotEmpty) {
+                          barcodeController.text = '';
+                          barcodeFocus.unfocus();
+                        }
+                        // value.prodId != null ? FocusScope.of(context).unfocus() : null;
+                      });
+                    }
                   });
                   // }
                 },

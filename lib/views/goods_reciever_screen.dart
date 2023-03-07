@@ -105,24 +105,26 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                   StockManagerController()
                       .getProductByBarcode(barcode)
                       .then((value) {
-                    setState(() {
-                      sampleProduct = value;
-                      productNameController.text = value.productName ?? "";
-                      retailPriceController.text = value.cost ?? "";
-                      stockController.text = value.stock ?? "";
-                      priceController.text = value.retailPrice ?? "";
-                      unitController.text = value.uom ?? "";
+                    if (value.prodId != null) {
+                      setState(() {
+                        sampleProduct = value;
+                        productNameController.text = value.productName ?? "";
+                        retailPriceController.text = value.cost ?? "";
+                        stockController.text = value.stock ?? "";
+                        priceController.text = value.retailPrice ?? "";
+                        unitController.text = value.uom ?? "";
 
-                      barcodeViewController.text = value.barcode ?? '';
-                      isSearching = false;
-                      if ((value.prodId ?? '').isNotEmpty) {
-                        barcodeController.text = '';
-                        quanityFocusNode.requestFocus();
-                      }
-                      // value.prodId != null
-                      //     ? FocusScope.of(context).unfocus()
-                      //     : null;
-                    });
+                        barcodeViewController.text = value.barcode ?? '';
+                        isSearching = false;
+                        if ((value.prodId ?? '').isNotEmpty) {
+                          barcodeController.text = '';
+                          quanityFocusNode.requestFocus();
+                        }
+                        // value.prodId != null
+                        //     ? FocusScope.of(context).unfocus()
+                        //     : null;
+                      });
+                    }
                   });
                   // }
                 },

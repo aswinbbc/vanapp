@@ -72,21 +72,23 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
                   StockManagerController()
                       .getProductByBarcode(barcode)
                       .then((value) {
-                    setState(() {
-                      sampleProduct = value;
-                      productNameController.text = value.productName ?? "";
-                      retailPriceController.text = value.cost ?? "";
-                      unitController.text = value.uom ?? "";
-                      stockController.text = value.stock ?? "";
-                      priceController.text = value.retailPrice ?? "";
-                      barcodeViewController.text = value.barcode ?? '';
-                      isSearching = false;
-                      if ((value.prodId ?? '').isNotEmpty) {
-                        barcodeController.text = '';
-                        quanityFocusNode.requestFocus();
-                      }
-                      // value.prodId != null ? FocusScope.of(context).unfocus() : null;
-                    });
+                    if (value.prodId != null) {
+                      setState(() {
+                        sampleProduct = value;
+                        productNameController.text = value.productName ?? "";
+                        retailPriceController.text = value.cost ?? "";
+                        unitController.text = value.uom ?? "";
+                        stockController.text = value.stock ?? "";
+                        priceController.text = value.retailPrice ?? "";
+                        barcodeViewController.text = value.barcode ?? '';
+                        isSearching = false;
+                        if ((value.prodId ?? '').isNotEmpty) {
+                          barcodeController.text = '';
+                          quanityFocusNode.requestFocus();
+                        }
+                        // value.prodId != null ? FocusScope.of(context).unfocus() : null;
+                      });
+                    }
                   });
                   // }
                 },

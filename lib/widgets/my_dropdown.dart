@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:searchable_paginated_dropdown/searchable_paginated_dropdown.dart';
 
 class MyDropdown extends StatefulWidget {
   const MyDropdown(
-      {super.key, required this.list, required this.controller, this.onchange});
+      {super.key,
+      required this.list,
+      required this.controller,
+      this.onchange,
+      this.hint});
   final List<String> list;
+  final String? hint;
   final MyDropController controller;
   final Function(String?)? onchange;
 
@@ -26,6 +32,7 @@ class _MyDropdownState extends State<MyDropdown> {
   setValue(String value) {
     if (value.isNotEmpty) {
       setState(() {
+        controller.value = value;
         dropdownValue = value;
       });
     }
@@ -33,6 +40,24 @@ class _MyDropdownState extends State<MyDropdown> {
 
   @override
   Widget build(BuildContext context) {
+    return SearchableDropdown<String>(
+      hintText: Text(widget.hint ?? ''),
+      margin: const EdgeInsets.all(15),
+      items: widget.list
+          .map((e) => SearchableDropdownMenuItem<String>(
+              value: e,
+              label: e,
+              child: Text(
+                e,
+                maxLines: 1,
+                overflow: TextOverflow.fade,
+              )))
+          .toList(),
+      onChanged: (String? value) {
+        setValue(value ?? '');
+        widget.onchange != null ? widget.onchange!(value) : null;
+      },
+    );
     return DropdownButtonFormField<String>(
         isExpanded: true,
         value: dropdownValue,

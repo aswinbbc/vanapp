@@ -91,6 +91,7 @@ class StockManagerController {
   Future<String> writeGrnDetails(
       {required String entryId,
       required String productId,
+      required String slno,
       uomName = 'PCS',
       uomId = '1',
       required String cost,

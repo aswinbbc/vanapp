@@ -43,6 +43,7 @@ class _MyDropdownState extends State<MyDropdown> {
     return SearchableDropdown<String>(
       hintText: Text(widget.hint ?? ''),
       margin: const EdgeInsets.all(15),
+      value: controller.value,
       items: widget.list
           .map((e) => SearchableDropdownMenuItem<String>(
               value: e,

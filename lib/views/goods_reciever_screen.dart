@@ -215,6 +215,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                                       : qtyController.text)
                                 });
                               }
+                              sampleProduct = null;
                               barcodeController.clear();
                               productNameController.clear();
                               retailPriceController.clear();
@@ -223,6 +224,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                               priceController.clear();
                               unitController.clear();
                               qtyController.clear();
+
                               focusNode.requestFocus();
                             });
                           },
@@ -300,10 +302,11 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
       final String entryId =
           await StockManagerController().writeGrnMaster(supplierId: supplier);
       final pController = StockManagerController();
-
+      int i = 1;
       await Future.wait(productList.map((productMap) async {
         ProductModel product = productMap['product'];
         await pController.writeGrnDetails(
+            slno: (i++).toString(),
             entryId: entryId,
             uomName: product.uom,
             uomId: product.uomId,
@@ -311,6 +314,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
             cost: product.cost!,
             qty: productMap['qty'].toString());
       }));
+      print(i);
       setState(() {
         productList.clear();
         isSubmitted = false;

@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 
 class ProductDataTable extends StatefulWidget {
   const ProductDataTable(
-      {super.key, required this.listOfColumns, required this.onRemove});
+      {super.key,
+      required this.listOfColumns,
+      required this.onRemove,
+      this.showCount = false});
   final List<Map<String, dynamic>> listOfColumns;
   final Function(int) onRemove;
+  final bool showCount;
   @override
   State<ProductDataTable> createState() => _ProductDataTableState();
 }
@@ -31,13 +35,16 @@ class _ProductDataTableState extends State<ProductDataTable> {
               // outside: const BorderSide(width: 1.0),
               ),
           columnSpacing: 1,
-          columns: const [
-            DataColumn(label: Expanded(flex: 4, child: Text('Product'))),
-            DataColumn(
+          columns: [
+            if (widget.showCount)
+              const DataColumn(
+                  label: Expanded(flex: 1, child: Center(child: Text('#')))),
+            const DataColumn(label: Expanded(flex: 4, child: Text('Product'))),
+            const DataColumn(
                 label: Expanded(flex: 1, child: Center(child: Text('Qty')))),
-            DataColumn(
+            const DataColumn(
                 label: Expanded(flex: 1, child: Center(child: Text('Cost')))),
-            DataColumn(
+            const DataColumn(
                 label: Expanded(flex: 2, child: Center(child: Text('total')))),
           ],
           rows:
@@ -45,6 +52,9 @@ class _ProductDataTableState extends State<ProductDataTable> {
                   .map(
                     ((map) => DataRow(
                           cells: <DataCell>[
+                            if (widget.showCount)
+                              DataCell(
+                                  Center(child: Text(map['count'].toString()))),
                             DataCell(Text(map['product']
                                 .productName!)), //Extracting from Map element the value
                             DataCell(

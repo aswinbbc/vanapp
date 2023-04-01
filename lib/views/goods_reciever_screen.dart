@@ -32,6 +32,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
   bool isSearching = false;
   final MyDropController controller = MyDropController();
   var focusNode = FocusNode();
+  int count = 1;
   List<Map<String, dynamic>> productList = [
     // {
     //   'product': ProductModel(
@@ -210,6 +211,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                               if (sampleProduct != null) {
                                 productList.add({
                                   'product': sampleProduct,
+                                  'count': count++,
                                   'qty': double.parse(qtyController.text.isEmpty
                                       ? "1"
                                       : qtyController.text)
@@ -245,6 +247,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
           visible: isTableVisible,
           child: SingleChildScrollView(
               child: ProductDataTable(
+            showCount: true,
             listOfColumns: productList,
             onRemove: (index) {
               setState(() {
@@ -306,7 +309,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
       await Future.wait(productList.map((productMap) async {
         ProductModel product = productMap['product'];
         await pController.writeGrnDetails(
-            slno: (i++).toString(),
+            slno: productMap['count'].toString(),
             entryId: entryId,
             uomName: product.uom,
             uomId: product.uomId,
@@ -316,6 +319,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
       }));
       print(i);
       setState(() {
+        count = 0;
         productList.clear();
         isSubmitted = false;
       });

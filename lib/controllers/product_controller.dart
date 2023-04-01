@@ -97,7 +97,7 @@ class StockManagerController {
       required String cost,
       String qty = '1'}) async {
     final List? result = await loadServerData(
-        "GoodsReceipt/WriteGRNDetails?slno=1&entryid=$entryId&product_id=$productId&qty=$qty&inv_code=Company&uom_name=$uomName&uom_id=$uomId&price=$cost");
+        "GoodsReceipt/WriteGRNDetails?slno=$slno&entryid=$entryId&product_id=$productId&qty=$qty&inv_code=Company&uom_name=$uomName&uom_id=$uomId&price=$cost");
     print(result);
     return result != null ? result.first.toString() : 'error';
   }

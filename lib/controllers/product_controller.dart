@@ -74,7 +74,7 @@ class StockManagerController {
 //--stock taken
 
 //GRN
-  Future<String> writeGrnMaster({
+  Future<Map<String, String>> writeGrnMaster({
     required String supplierId,
     systemId = '1',
     userId = '1',
@@ -84,8 +84,11 @@ class StockManagerController {
 
     final List result = await loadServerData(
         "GoodsReceipt/WriteGRNMaster?supplier_id=$supplierId&entry_date=$entryDate&system_id=$systemId&user_id=$userId");
-
-    return result.first['BILLID'];
+    Map<String, String> res = {
+      'BILLID': result.first['BILLID'],
+      'grnNo': result.first['grn_no'],
+    };
+    return res;
   }
 
   Future<String> writeGrnDetails(

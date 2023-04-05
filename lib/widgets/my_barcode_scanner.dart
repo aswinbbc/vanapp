@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class MyBarcodeScanner extends StatefulWidget {
@@ -27,16 +28,23 @@ class _MyBarcodeScannerState extends State<MyBarcodeScanner> {
       Expanded(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-          child: TextField(
-            focusNode: widget.focusNode,
-            onSubmitted: onBarcode,
-            controller: controller,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              hintText: "Barcode",
-              suffixIcon: InkWell(
-                  onTap: getBarcode,
-                  child: const Icon(Icons.qr_code_scanner_outlined)),
+          child: RawKeyboardListener(
+            focusNode: widget.focusNode ?? FocusNode(),
+            onKey: (event) {
+              if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
+                onBarcode(controller.text);
+              }
+            },
+            child: TextField(
+              onSubmitted: onBarcode,
+              controller: controller,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: "Barcode",
+                suffixIcon: InkWell(
+                    onTap: getBarcode,
+                    child: const Icon(Icons.qr_code_scanner_outlined)),
+              ),
             ),
           ),
         ),

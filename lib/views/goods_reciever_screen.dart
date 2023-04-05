@@ -302,27 +302,28 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
           .where((element) => element.toString() == controller.value)
           .first
           .clientId!;
-      final String entryId =
+      final Map<String, String> entryRes =
           await StockManagerController().writeGrnMaster(supplierId: supplier);
       final pController = StockManagerController();
-      int i = 1;
+
       await Future.wait(productList.map((productMap) async {
         ProductModel product = productMap['product'];
         await pController.writeGrnDetails(
             slno: productMap['count'].toString(),
-            entryId: entryId,
+            entryId: entryRes['BILLID']!,
             uomName: product.uom,
             uomId: product.uomId,
             productId: product.prodId!,
             cost: product.cost!,
             qty: productMap['qty'].toString());
       }));
-      print(i);
+
       setState(() {
-        count = 0;
+        count = 1;
         productList.clear();
         isSubmitted = false;
       });
+      await _showMyDialog(context, "Entry Number", entryRes['grnNo']!);
     } else {
       showToast('empty list...');
       setState(() {
@@ -330,4 +331,32 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
       });
     }
   }
+}
+
+Future<void> _showMyDialog(
+    BuildContext context, String title, String content) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(title),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text(content),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('close'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

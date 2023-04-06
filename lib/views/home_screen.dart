@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:vanapp/controllers/employee_controller.dart';
+import 'package:vanapp/models/employee_model.dart';
+import 'package:vanapp/utils/constants/constant.dart';
+import 'package:vanapp/utils/constants/utils.dart';
 import 'package:vanapp/views/add_product_screen.dart';
 import 'package:vanapp/views/goods_reciever_screen.dart';
 import 'package:vanapp/views/purchase_return/purchase_return_screen.dart';
 import 'package:vanapp/views/settings_screen.dart';
 import 'package:vanapp/views/view_scanned_product_screen.dart';
 import 'package:vanapp/views/write_stock_taken_screen.dart';
+import 'package:vanapp/widgets/my_dropdown.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,6 +35,31 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  final controller = MyDropController();
+  List<EmployeeModel> employees = [];
+  String empname = '';
+  @override
+  void initState() {
+    loadEmployee();
+    // Constants.employeeId.then((value) {
+    //   print({'@vv': value});
+    //   if (value.trim().isEmpty) {
+    //     setState(() {
+    //       currentIndex = -1;
+    //     });
+    //   }
+    // });
+    super.initState();
+  }
+
+  loadEmployee() {
+    Constants.employeeName.then((value) {
+      setState(() {
+        empname = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,12 +67,59 @@ class _HomeScreenState extends State<HomeScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         toolbarHeight: 40,
+        actions: [
+          Center(child: Text('Employee: $empname')),
+          SizedBox(
+            width: 2,
+          )
+        ],
+        centerTitle: true,
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const ListTile(),
+            ListTile(
+              title: Row(
+                children: [
+                  Text("Select Employee: "),
+                  FutureBuilder(
+                      future: EmployeeController().getEmployees(),
+                      builder: (context,
+                          AsyncSnapshot<List<EmployeeModel>> snapshot) {
+                        if (snapshot.hasData) {
+                          employees = snapshot.data!;
+                        }
+                        return snapshot.hasData
+                            ? Flexible(
+                                child: MyDropdown(
+                                  list: snapshot.data!
+                                      .map((employee) => employee.toString())
+                                      .toList(),
+                                  controller: controller,
+                                  onchange: (name) async {
+                                    if (name!.trim().isEmpty) {
+                                      showToast('Please choose Employee...');
+                                    }
+                                    await Constants()
+                                        .setEmployeeName(name ?? '');
+                                    String empId = employees
+                                            .where((element) =>
+                                                element.toString() ==
+                                                controller.value)
+                                            .first
+                                            .empId ??
+                                        '';
+                                    await Constants().setEmployeeId(empId);
+                                    loadEmployee();
+                                  },
+                                ),
+                              )
+                            : const Text("waiting.....");
+                      }),
+                ],
+              ),
+            ),
             ...screens
                 .map(
                   (e) => ListTile(

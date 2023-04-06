@@ -65,4 +65,9 @@ class EmployeeModel {
     data['department_id1'] = departmentId1;
     return data;
   }
+
+  @override
+  String toString() {
+    return empName ?? '';
+  }
 }

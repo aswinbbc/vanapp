@@ -33,6 +33,8 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
   final MyDropController controller = MyDropController();
   var focusNode = FocusNode();
   int count = 1;
+
+  var total = 0.0;
   List<Map<String, dynamic>> productList = [
     // {
     //   'product': ProductModel(
@@ -226,7 +228,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
                               priceController.clear();
                               unitController.clear();
                               qtyController.clear();
-
+                              calculateTotal();
                               focusNode.requestFocus();
                             });
                           },
@@ -246,14 +248,30 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
         Visibility(
           visible: isTableVisible,
           child: SingleChildScrollView(
-              child: ProductDataTable(
-            showCount: true,
-            listOfColumns: productList,
-            onRemove: (index) {
-              setState(() {
-                productList.removeAt(index);
-              });
-            },
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                child: Text(
+                  'Net Total : ${total.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              ProductDataTable(
+                showCount: true,
+                listOfColumns: productList,
+                onRemove: (index) {
+                  setState(() {
+                    productList.removeAt(index);
+                    calculateTotal();
+                  });
+                },
+              ),
+            ],
           )),
         ),
         Align(
@@ -321,15 +339,28 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
       setState(() {
         count = 1;
         productList.clear();
+        calculateTotal();
         isSubmitted = false;
       });
       await _showMyDialog(context, "Entry Number", entryRes['grnNo']!);
     } else {
       showToast('empty list...');
       setState(() {
+        calculateTotal();
         isSubmitted = false;
       });
     }
+  }
+
+  void calculateTotal() {
+    total = productList.isNotEmpty
+        ? productList.map((productMap) {
+            ProductModel product = productMap['product'];
+            double price = double.parse(product.cost ?? '0');
+            double qty = productMap['qty'];
+            return price * qty;
+          }).reduce((a, b) => a + b)
+        : 0;
   }
 }
 

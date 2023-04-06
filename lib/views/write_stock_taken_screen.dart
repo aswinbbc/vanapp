@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/types/gf_button_type.dart';
+import 'package:vanapp/utils/constants/constant.dart';
 import 'package:vanapp/utils/constants/utils.dart';
 import 'package:vanapp/widgets/custom_textfield.dart';
 import 'package:vanapp/widgets/my_barcode_scanner.dart';
@@ -45,6 +46,8 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
   FocusNode quanityFocusNode = FocusNode();
 
   var isSubmitted = false;
+
+  int count = 1; //TODO: change if remove issue...
 
   @override
   Widget build(BuildContext context) {
@@ -173,6 +176,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
                             setState(() {
                               if (sampleProduct != null) {
                                 productList.add({
+                                  'count': count++,
                                   'product': sampleProduct,
                                   'qty': double.parse(qtyController.text.isEmpty
                                       ? "1"
@@ -207,6 +211,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
             visible: isTableVisible,
             child: SingleChildScrollView(
                 child: ProductDataTable(
+              showCount: true,
               listOfColumns: productList,
               onRemove: (index) {
                 setState(() {
@@ -255,8 +260,13 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
       isSubmitted = true;
     });
     if (productList.isNotEmpty) {
-      final String entryId =
-          await StockManagerController().writeStockTakenMaster();
+      String stockTakenEmployeeId = await Constants.employeeId;
+      if (stockTakenEmployeeId.trim().isEmpty) {
+        showToast('Please choose Employee...');
+        return;
+      }
+      final String entryId = await StockManagerController()
+          .writeStockTakenMaster(stockTakenEmpId: stockTakenEmployeeId);
       await Future.wait(productList.map((productMap) async {
         ProductModel product = productMap['product'];
         await StockManagerController().writeStockTakenDetails(
@@ -268,6 +278,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
       }));
       await StockManagerController().writeStockFinish(entry: entryId);
       setState(() {
+        count = 1;
         productList.clear();
         isSubmitted = false;
       });

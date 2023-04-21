@@ -53,10 +53,28 @@ class Constants {
     return prefs.getString('employee_name') ?? "";
   }
 
+  static Future<String> get stockTakenName async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('stock_taken_name') ?? "";
+  }
+
+  static Future<String> get stockTakenId async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('stock_taken_id') ?? "";
+  }
+
   static Future<String> get employeeId async {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('employee_id') ?? "";
+  }
+
+  static Future<String> get systemName async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('system_name') ?? "";
   }
 
   Future<bool> setUserName(String name) async {
@@ -81,5 +99,23 @@ class Constants {
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
     return prefs.setString('employee_id', id);
+  }
+
+  Future<bool> setSystemName(String value) async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.setString('system_name', value);
+  }
+
+  Future<bool> setStockTakenName(String value) async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.setString('stock_taken_name', value);
+  }
+
+  Future<bool> setStockTakenId(String value) async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.setString('stock_taken_id', value);
   }
 }

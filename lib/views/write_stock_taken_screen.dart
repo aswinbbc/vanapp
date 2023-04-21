@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/types/gf_button_type.dart';
+import 'package:vanapp/controllers/employee_controller.dart';
+import 'package:vanapp/models/employee_model.dart';
+import 'package:vanapp/models/stock_entry_model.dart';
 import 'package:vanapp/utils/constants/constant.dart';
 import 'package:vanapp/utils/constants/utils.dart';
 import 'package:vanapp/widgets/custom_textfield.dart';
 import 'package:vanapp/widgets/my_barcode_scanner.dart';
+import 'package:vanapp/widgets/my_dropdown.dart';
 import 'package:vanapp/widgets/product_data_table.dart';
 
 import '../controllers/product_controller.dart';
@@ -47,6 +51,7 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
 
   var isSubmitted = false;
 
+  // ignore: todo
   int count = 1; //TODO: change if remove issue...
 
   @override
@@ -210,14 +215,20 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
         Visibility(
             visible: isTableVisible,
             child: SingleChildScrollView(
-                child: ProductDataTable(
-              showCount: true,
-              listOfColumns: productList,
-              onRemove: (index) {
-                setState(() {
-                  productList.removeAt(index);
-                });
-              },
+                child: Column(
+              children: [
+                const SelectEmployeeWidget(),
+                const SelectStockTakenNameWidget(),
+                ProductDataTable(
+                  showCount: true,
+                  listOfColumns: productList,
+                  onRemove: (index) {
+                    setState(() {
+                      productList.removeAt(index);
+                    });
+                  },
+                ),
+              ],
             ))),
         Align(
           alignment: Alignment.bottomLeft,
@@ -261,12 +272,19 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
     });
     if (productList.isNotEmpty) {
       String stockTakenEmployeeId = await Constants.employeeId;
+      String stockTakenEntryid = await Constants.stockTakenId;
       if (stockTakenEmployeeId.trim().isEmpty) {
         showToast('Please choose Employee...');
         return;
       }
+      if (stockTakenEntryid.trim().isEmpty) {
+        showToast('Please choose stockTaken...');
+        return;
+      }
       final String entryId = await StockManagerController()
-          .writeStockTakenMaster(stockTakenEmpId: stockTakenEmployeeId);
+          .writeStockTakenMaster(
+              stockTakenEmpId: stockTakenEmployeeId,
+              zeroEntryId: stockTakenEntryid);
       await Future.wait(productList.map((productMap) async {
         ProductModel product = productMap['product'];
         await StockManagerController().writeStockTakenDetails(
@@ -288,5 +306,171 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
         isSubmitted = false;
       });
     }
+  }
+}
+
+class SelectEmployeeWidget extends StatefulWidget {
+  const SelectEmployeeWidget({super.key});
+
+  @override
+  State<SelectEmployeeWidget> createState() => _SelectEmployeeWidgetState();
+}
+
+class _SelectEmployeeWidgetState extends State<SelectEmployeeWidget> {
+  final controller = MyDropController();
+  List<EmployeeModel> employees = [];
+  String empname = '';
+  @override
+  void initState() {
+    loadEmployee();
+    // Constants.employeeId.then((value) {
+    //   print({'@vv': value});
+    //   if (value.trim().isEmpty) {
+    //     setState(() {
+    //       currentIndex = -1;
+    //     });
+    //   }
+    // });
+    super.initState();
+  }
+
+  loadEmployee() {
+    Constants.employeeName.then((value) {
+      setState(() {
+        empname = value;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      child: Row(
+        children: [
+          const Text("Select Employee: "),
+          const SizedBox(
+            width: 10,
+          ),
+          FutureBuilder(
+              future: EmployeeController().getEmployees(),
+              builder: (context, AsyncSnapshot<List<EmployeeModel>> snapshot) {
+                if (snapshot.hasData) {
+                  employees = snapshot.data!;
+                }
+                return snapshot.hasData
+                    ? Flexible(
+                        child: MyDropdown(
+                          initValue: empname,
+                          list: snapshot.data!
+                              .map((employee) => employee.toString())
+                              .toList(),
+                          controller: controller,
+                          onchange: (name) async {
+                            if (name!.trim().isEmpty) {
+                              showToast('Please choose Employee...');
+                            }
+                            await Constants().setEmployeeName(name);
+                            String empId = employees
+                                    .where((element) =>
+                                        element.toString() == controller.value)
+                                    .first
+                                    .empId ??
+                                '';
+                            await Constants().setEmployeeId(empId);
+                            loadEmployee();
+                          },
+                        ),
+                      )
+                    : const Text("waiting.....");
+              }),
+        ],
+      ),
+    );
+  }
+}
+
+class SelectStockTakenNameWidget extends StatefulWidget {
+  const SelectStockTakenNameWidget({super.key});
+
+  @override
+  State<SelectStockTakenNameWidget> createState() =>
+      _SelectStockTakenNameWidgetState();
+}
+
+class _SelectStockTakenNameWidgetState
+    extends State<SelectStockTakenNameWidget> {
+  final controller = MyDropController();
+  List<StockEntryModel> stockTakenEntries = [];
+  String stockTakenName = '';
+  @override
+  void initState() {
+    loadStockEntries();
+    // Constants.employeeId.then((value) {
+    //   print({'@vv': value});
+    //   if (value.trim().isEmpty) {
+    //     setState(() {
+    //       currentIndex = -1;
+    //     });
+    //   }
+    // });
+    super.initState();
+  }
+
+  loadStockEntries() {
+    Constants.stockTakenName.then((value) {
+      setState(() {
+        stockTakenName = value;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      child: Row(
+        children: [
+          const Text("Select stock taken: "),
+          const SizedBox(
+            width: 10,
+          ),
+          FutureBuilder(
+              future: StockManagerController().getStockEntries(),
+              builder:
+                  (context, AsyncSnapshot<List<StockEntryModel>> snapshot) {
+                if (snapshot.hasData) {
+                  stockTakenEntries = snapshot.data!;
+                }
+                return snapshot.hasData
+                    ? Flexible(
+                        child: MyDropdown(
+                          verticalMargin: 0,
+                          initValue: stockTakenName,
+                          list: snapshot.data!
+                              .map((stockTaken) => stockTaken.toString())
+                              .toList(),
+                          controller: controller,
+                          onchange: (name) async {
+                            if (name!.trim().isEmpty) {
+                              showToast('Please choose StockTaken...');
+                            }
+                            await Constants().setStockTakenName(name);
+                            String stockEntryId = stockTakenEntries
+                                    .where((element) =>
+                                        element.toString() == controller.value)
+                                    .first
+                                    .stEntryId ??
+                                '';
+                            await Constants().setStockTakenId(stockEntryId);
+                            loadStockEntries();
+                          },
+                        ),
+                      )
+                    : const Text("waiting.....");
+              }),
+        ],
+      ),
+    );
   }
 }

@@ -29,6 +29,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController retailPriceController = TextEditingController();
   final TextEditingController qtyController = TextEditingController();
+  final TextEditingController focController = TextEditingController();
   bool isSearching = false;
   final MyDropController controller = MyDropController();
   var focusNode = FocusNode();
@@ -253,12 +254,27 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                child: Text(
-                  'Net Total : ${total.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 18.0, vertical: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: CustomTextField(
+                        hintText: "FOC",
+                        controller: focController,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      'Net Total : ${total.toStringAsFixed(2)}',
+                      textAlign: TextAlign.justify,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          color: Colors.green,
+                          fontSize: 20),
+                    ),
+                  ],
                 ),
               ),
               ProductDataTable(
@@ -320,8 +336,11 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
           .where((element) => element.toString() == controller.value)
           .first
           .clientId!;
-      final Map<String, String> entryRes =
-          await StockManagerController().writeGrnMaster(supplierId: supplier);
+      final Map<String, String> entryRes = await StockManagerController()
+          .writeGrnMaster(
+              supplierId: supplier,
+              foc:
+                  focController.text.trim().isEmpty ? "0" : focController.text);
       final pController = StockManagerController();
 
       await Future.wait(productList.map((productMap) async {
@@ -342,6 +361,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
         calculateTotal();
         isSubmitted = false;
       });
+      // ignore: use_build_context_synchronously
       await _showMyDialog(context, "Entry Number", entryRes['grnNo']!);
     } else {
       showToast('empty list...');

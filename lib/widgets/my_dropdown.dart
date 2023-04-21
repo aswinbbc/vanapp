@@ -7,10 +7,15 @@ class MyDropdown extends StatefulWidget {
       required this.list,
       required this.controller,
       this.onchange,
-      this.hint});
+      this.hint,
+      this.initValue,
+      this.horizontalMargin,
+      this.verticalMargin});
   final List<String> list;
   final String? hint;
+  final double? horizontalMargin, verticalMargin;
   final MyDropController controller;
+  final String? initValue;
   final Function(String?)? onchange;
 
   @override
@@ -22,7 +27,7 @@ class _MyDropdownState extends State<MyDropdown> {
   late MyDropController controller;
   @override
   void initState() {
-    dropdownValue = widget.list.first;
+    dropdownValue = widget.initValue ?? widget.list.first;
     controller = widget.controller;
     controller.value = dropdownValue;
     widget.onchange != null ? widget.onchange!(dropdownValue) : null;
@@ -42,7 +47,9 @@ class _MyDropdownState extends State<MyDropdown> {
   Widget build(BuildContext context) {
     return SearchableDropdown<String>(
       hintText: Text(widget.hint ?? ''),
-      margin: const EdgeInsets.all(15),
+      margin: EdgeInsets.symmetric(
+          horizontal: widget.horizontalMargin ?? 15,
+          vertical: widget.verticalMargin ?? 15),
       value: controller.value,
       items: widget.list
           .map((e) => SearchableDropdownMenuItem<String>(
@@ -59,35 +66,6 @@ class _MyDropdownState extends State<MyDropdown> {
         widget.onchange != null ? widget.onchange!(value) : null;
       },
     );
-    return DropdownButtonFormField<String>(
-        isExpanded: true,
-        value: dropdownValue,
-        icon: const Icon(Icons.arrow_downward),
-        elevation: 16,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          filled: true,
-          fillColor: Colors.transparent,
-        ),
-        onChanged: (String? value) {
-          // This is called when the user selects an item.
-
-          setState(() {
-            dropdownValue = value!;
-            controller.value = value;
-            widget.onchange != null ? widget.onchange!(value) : null;
-          });
-        },
-        items: widget.list.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(
-              value,
-              maxLines: 1,
-              overflow: TextOverflow.fade,
-            ),
-          );
-        }).toList());
   }
 }
 

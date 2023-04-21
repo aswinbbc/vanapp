@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/components/button/gf_button.dart';
-import 'package:vanapp/controllers/employee_controller.dart';
-import 'package:vanapp/models/employee_model.dart';
 import 'package:vanapp/utils/constants/utils.dart';
-import 'package:vanapp/widgets/my_dropdown.dart';
 
 import '../utils/constants/constant.dart';
 import '../widgets/custom_textfield.dart';
@@ -17,12 +14,15 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final ipController = TextEditingController();
+  final systemNameController = TextEditingController();
   final portController = TextEditingController();
 
   @override
   initState() {
     super.initState();
     Constants.ip.then((value) => setState((() => ipController.text = value)));
+    Constants.systemName
+        .then((value) => setState((() => systemNameController.text = value)));
     Constants.port
         .then((value) => setState((() => portController.text = value)));
   }
@@ -34,14 +34,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(children: [
-            Text("IP:"),
+            const Text("IP:"),
             Expanded(
                 flex: 2,
                 child: CustomTextField(
                   hintText: "Enter server IP here",
                   controller: ipController,
                 )),
-            Text(" PORT:"),
+            const Text(" PORT:"),
             Expanded(
                 child: CustomTextField(
               hintText: "eg:- 90",
@@ -49,10 +49,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             )),
           ]),
         ),
+        Expanded(
+            flex: 2,
+            child: CustomTextField(
+              hintText: "Enter system name",
+              controller: systemNameController,
+            )),
         GFButton(
             blockButton: true,
             onPressed: () async {
               await Constants().setPORT(portController.text);
+              await Constants().setSystemName(systemNameController.text);
               Constants()
                   .setIp(ipController.text)
                   .then((value) => showToast("saved, please restart"));

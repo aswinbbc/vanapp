@@ -2,6 +2,7 @@ import 'package:vanapp/models/brand_model.dart';
 import 'package:vanapp/models/category_model.dart';
 import 'package:vanapp/models/credit_purchase_invoice_model.dart';
 import 'package:vanapp/models/product_model.dart';
+import 'package:vanapp/models/stock_entry_model.dart';
 import 'package:vanapp/models/uom_model.dart';
 import 'package:vanapp/utils/constants/utils.dart';
 import 'package:vanapp/utils/network_service.dart';
@@ -25,6 +26,14 @@ class StockManagerController {
     return result.first['st_entry_id'];
   }
 
+  Future<List<StockEntryModel>> getStockEntries({
+    branchId = '1',
+  }) async {
+    final List result = await loadServerData(
+        "StockTaken/GetZeroStockEntries?branch_id=$branchId");
+    return result.map((json) => StockEntryModel.fromJson(json)).toList();
+  }
+
   Future<String> get inventoryId async {
     String branchId = "1";
     final List result =
@@ -40,10 +49,11 @@ class StockManagerController {
     appUserId = '4',
     refNo = 'aa',
     systemId = '1',
+    required String zeroEntryId,
   }) async {
     appUserId = await Constants.userId;
     String inventoryId = await this.inventoryId;
-    String zeroEntryId = await zeroStockEntryId;
+    // String zeroEntryId = await zeroStockEntryId;
     String entryDate = currentDate;
     final List result = await loadServerData(
         "StockTaken/WriteStockTakenMaster?entry_date=$entryDate&ref_no=$refNo&stock_taken_emp_id=$stockTakenEmpId&inventory_id=$inventoryId&narration=testings&app_user_id=$appUserId&zero_stock_entry_id=$zeroEntryId&system_id=$systemId");
@@ -59,7 +69,6 @@ class StockManagerController {
     final List result = await loadServerData(
             "StockTaken/WriteStockTakenDetails?entry_id=$entryId&product_id=$productId&unit_id=$unitId&cost=$cost&qty=$qty") ??
         ['error'];
-    print(result);
     return result.first.toString();
   }
 
@@ -78,12 +87,13 @@ class StockManagerController {
     required String supplierId,
     systemId = '1',
     userId = '1',
+    required String foc,
   }) async {
     String entryDate = currentDate;
     userId = await Constants.userId;
 
     final List result = await loadServerData(
-        "GoodsReceipt/WriteGRNMaster?supplier_id=$supplierId&entry_date=$entryDate&system_id=$systemId&user_id=$userId");
+        "GoodsReceipt/WriteGRNMaster?supplier_id=$supplierId&entry_date=$entryDate&system_id=$systemId&user_id=$userId&foc_qty=$foc");
     Map<String, String> res = {
       'BILLID': result.first['BILLID'],
       'grnNo': result.first['grn_no'],
@@ -101,7 +111,6 @@ class StockManagerController {
       String qty = '1'}) async {
     final List? result = await loadServerData(
         "GoodsReceipt/WriteGRNDetails?slno=$slno&entryid=$entryId&product_id=$productId&qty=$qty&inv_code=Company&uom_name=$uomName&uom_id=$uomId&price=$cost");
-    print(result);
     return result != null ? result.first.toString() : 'error';
   }
 

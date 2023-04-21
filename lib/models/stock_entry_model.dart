@@ -15,4 +15,9 @@ class StockEntryModel {
     data['stock_taken_name'] = stockTakenName;
     return data;
   }
+
+  @override
+  String toString() {
+    return stockTakenName ?? '';
+  }
 }

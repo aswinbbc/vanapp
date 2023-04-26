@@ -118,4 +118,16 @@ class Constants {
     final prefs = await SharedPreferences.getInstance();
     return prefs.setString('stock_taken_id', value);
   }
+
+  Future<bool> setBranch(String value) async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.setString('branch', value);
+  }
+
+  static Future<String> get branch async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('branch') ?? "1";
+  }
 }

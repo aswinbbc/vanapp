@@ -130,4 +130,16 @@ class Constants {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('branch') ?? "1";
   }
+
+  Future<bool> registered(bool value) async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.setBool('is_set', value);
+  }
+
+  static Future<bool> get isRegistered async {
+    // Obtain shared preferences.
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('is_set') ?? false;
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:vanapp/controllers/company_controller.dart';
+import 'package:vanapp/models/branch_model.dart';
 import 'package:vanapp/models/supplier_model.dart';
 import 'package:vanapp/utils/constants/utils.dart';
 import 'package:vanapp/utils/extension.dart';
@@ -8,6 +9,8 @@ import 'package:vanapp/widgets/my_dropdown.dart';
 
 import '../utils/constants/constant.dart';
 import '../widgets/custom_textfield.dart';
+
+import 'package:device_info_plus/device_info_plus.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -20,7 +23,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final ipController = TextEditingController();
   final systemNameController = TextEditingController();
   final portController = TextEditingController();
-  List<Supplier> branches = [];
+  List<Branch> branches = [];
   final controller = MyDropController();
   String currentBranch = '';
 
@@ -32,6 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         .then((value) => setState((() => systemNameController.text = value)));
     Constants.port
         .then((value) => setState((() => portController.text = value)));
+    loadBranches();
   }
 
   @override
@@ -57,6 +61,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             )),
           ]),
         ),
+        GFButton(
+            blockButton: true,
+            onPressed: () async {
+              await Constants().setPORT(portController.text);
+              await Constants()
+                  .setSystemName(systemNameController.text)
+                  .then((value) => showToast("saved, please restart"));
+            },
+            child: const Text('Save IP')),
+        Divider(),
+        SizedBox(height: 20),
         Row(
           children: [
             const Text("Select Branch: "),
@@ -65,7 +80,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             FutureBuilder(
                 future: CompanyController().getBranches(),
-                builder: (context, AsyncSnapshot<List<Supplier>> snapshot) {
+                builder: (context, AsyncSnapshot<List<Branch>> snapshot) {
                   if (snapshot.hasData) {
                     branches = snapshot.data!;
                   }
@@ -74,22 +89,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: MyDropdown(
                             initValue: currentBranch,
                             list: snapshot.data!
-                                .map((employee) => employee.toString())
+                                .map((branch) => branch.branchName.toString())
                                 .toList(),
                             controller: controller,
                             onchange: (name) async {
                               if (name!.trim().isEmpty) {
-                                showToast('Please choose Employee...');
+                                showToast('Please choose Branch...');
                               }
-                              await Constants().setEmployeeName(name);
-                              String branch = branches
-                                      .where((element) =>
-                                          element.toString() ==
-                                          controller.value)
-                                      .first
-                                      .groupId ??
-                                  '';
-                              await Constants().setBranch(branch);
+                              await Constants().setBranch(name);
+
                               loadBranches();
                             },
                           ),
@@ -101,34 +109,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
           horizontalMargin: 8,
           horizontalPadding: 5,
         ),
-        Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomTextField(
-                hintText: "Enter system name",
-                controller: systemNameController,
-              ),
-            )),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CustomTextField(
+            hintText: "Enter system name",
+            controller: systemNameController,
+          ),
+        ),
         GFButton(
             blockButton: true,
             onPressed: () async {
-              await Constants().setPORT(portController.text);
-              await Constants().setSystemName(systemNameController.text);
-              Constants()
-                  .setIp(ipController.text)
-                  .then((value) => showToast("saved, please restart"));
+              if (systemNameController.text.isNotEmpty &&
+                  branchid.trim().isNotEmpty) {
+                showToast('wait..');
+                print(systemNameController.text + branchid);
+                Constants().setIp(ipController.text);
+                CompanyController().deviceRegistation(
+                    deviceName: systemNameController.text, branchId: branchid);
+                showToast('saved successfully..');
+              } else {
+                showToast('Please fill branch/system name...');
+              }
             },
-            child: const Text('Save')),
+            child: const Text('Register')),
+        Divider(),
+        Spacer(),
+        Spacer()
       ],
     );
   }
 
+  late String branchid;
   loadBranches() {
-    Constants.employeeName.then((value) {
+    Constants.branch.then((value) {
       setState(() {
         currentBranch = value;
       });
+      branchid = branches
+              .where((element) => element.branchName == controller.value)
+              .first
+              .branchId ??
+          '';
     });
   }
 }

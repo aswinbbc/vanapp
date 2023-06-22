@@ -91,7 +91,7 @@ class StockManagerController {
   }) async {
     String entryDate = currentDate;
     userId = await Constants.userId;
-
+    print({foc: "foc"});
     final List result = await loadServerData(
         "GoodsReceipt/WriteGRNMaster?supplier_id=$supplierId&entry_date=$entryDate&system_id=$systemId&user_id=$userId&foc_qty=$foc");
     Map<String, String> res = {

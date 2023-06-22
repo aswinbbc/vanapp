@@ -360,6 +360,7 @@ class _GoodsRecieverScreenState extends State<GoodsRecieverScreen> {
         productList.clear();
         calculateTotal();
         isSubmitted = false;
+        focController.clear();
       });
       // ignore: use_build_context_synchronously
       await _showMyDialog(context, "Entry Number", entryRes['grnNo']!);

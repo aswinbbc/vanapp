@@ -27,8 +27,9 @@ class _ProductDataTableState extends State<ProductDataTable> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: SizedBox(
+      child: Container(
         width: (MediaQuery.of(context).size.width - 5),
+        padding: const EdgeInsets.only(bottom: 55),
         child: DataTable(
           border: TableBorder.symmetric(
               // inside: const BorderSide(width: 2.0),

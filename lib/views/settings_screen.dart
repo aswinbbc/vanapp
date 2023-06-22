@@ -64,9 +64,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         GFButton(
             blockButton: true,
             onPressed: () async {
+              ;
               await Constants().setPORT(portController.text);
-              await Constants()
-                  .setSystemName(systemNameController.text)
+
+              Constants()
+                  .setIp(ipController.text)
                   .then((value) => showToast("saved, please restart"));
             },
             child: const Text('Save IP')),
@@ -123,7 +125,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   branchid.trim().isNotEmpty) {
                 showToast('wait..');
                 print(systemNameController.text + branchid);
-                Constants().setIp(ipController.text);
+                await Constants().setSystemName(systemNameController.text);
                 CompanyController().deviceRegistation(
                     deviceName: systemNameController.text, branchId: branchid);
                 showToast('saved successfully..');

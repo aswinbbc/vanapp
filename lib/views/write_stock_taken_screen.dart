@@ -267,9 +267,6 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
   }
 
   void submitStockTaken() async {
-    setState(() {
-      isSubmitted = true;
-    });
     if (productList.isNotEmpty) {
       String stockTakenEmployeeId = await Constants.employeeId;
       String stockTakenEntryid = await Constants.stockTakenId;
@@ -281,6 +278,9 @@ class _WriteStockScreenState extends State<WriteStockScreen> {
         showToast('Please choose stockTaken...');
         return;
       }
+      setState(() {
+        isSubmitted = true;
+      });
       final String entryId = await StockManagerController()
           .writeStockTakenMaster(
               stockTakenEmpId: stockTakenEmployeeId,
